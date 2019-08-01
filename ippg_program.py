@@ -18,23 +18,7 @@ from bayes_opt import BayesianOptimization
 from scipy import spatial
 from neural_update import NeuralAgent
 from controllers import Controller
-
-
-def clip_to_range(value, lw=-1, up=1):
-    if value > up:
-        return up
-    if value < lw:
-        return lw
-    return value
-
-
-def create_interval(value, delta):
-    interval = (value - delta, value + delta)
-    return interval
-
-def fold(fun, obs, init):
-    return functools.reduce(fun, obs, init)
-
+from utils import *
 
 class ParameterFinder():
     def __init__(self, inputs, actions, steer_prog, accel_prog, brake_prog):
@@ -132,7 +116,7 @@ def learn_policy(track_name):
             nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
         # Collect Trajectories
-        _, observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
+        observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
         all_observations += observation_list
         # Relabel Observations
         all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)

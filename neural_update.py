@@ -17,14 +17,7 @@ from actor_network import ActorNetwork
 from critic_network import CriticNetwork
 import functools
 import copy
-
-
-def clip_to_range(value, lw=-1, up=1):
-    if value > up:
-        return up
-    if value < lw:
-        return lw
-    return value
+from utils import *
 
 
 class FunctionOU(object):
