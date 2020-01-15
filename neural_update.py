@@ -169,8 +169,8 @@ class NeuralAgent():
                 lambda_store[j_iter] = lambda_track
                 base_q = copy.deepcopy(target_q_values)
 
-                if np.mod(step, 2000) == 0:
-                    logging.info("Episode " + str(i_episode) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+                #if np.mod(step, 2000) == 0:
+                logging.info("Episode " + str(i_episode) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
                 step += 1
                 if done:
@@ -281,8 +281,8 @@ class NeuralAgent():
 
             total_reward += r_t
             s_t = s_t1
-            if np.mod(step, 2000) == 0:
-                logging.info(" Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+            #if np.mod(step, 2000) == 0:
+            logging.info(" Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
             step += 1
             if done:

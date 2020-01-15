@@ -83,8 +83,8 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
             window_list.append(tempObs[:])
 
             ob, r_t, done, info = env.step(action_prior)
-            if np.mod(j, 1000) == 0:
-                logging.info("Episode " + str(i_episode) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+            #if np.mod(j, 1000) == 0:
+            logging.info("Episode " + str(i_episode) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
             if done:
                 print('Done. Steps: ', j)
