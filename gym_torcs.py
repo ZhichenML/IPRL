@@ -31,7 +31,7 @@ class TorcsEnv:
             config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
             os.system(config_string)
         else:
-            config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel &'
+            config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
             os.system(config_string)
 
         """
@@ -221,7 +221,7 @@ class TorcsEnv:
             config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
             os.system(config_string)
         else:
-            config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel &'
+            config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
             os.system(config_string)
 
     def agent_to_torcs(self, u):

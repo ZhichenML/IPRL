@@ -176,7 +176,7 @@ class Client():
                     os.system('pkill torcs')
                     time.sleep(1.0)
                     if self.vision is False:
-                        config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime &'
+                        config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &'
                         os.system(config_string)
                         # os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/practiceregcg.xml -nofuel -nodamage -nolaptime &')
                     else:
