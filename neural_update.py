@@ -140,7 +140,7 @@ class NeuralAgent():
                     (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
 
                 self.buff.add(s_t, a_t[0], r_t, s_t1, done)  # Add replay buffer
-                
+
                 # Do the batch update
                 batch = self.buff.getBatch(self.batch_size)
                 states = np.asarray([e[0] for e in batch])
@@ -159,7 +159,7 @@ class NeuralAgent():
                     else:
                         y_t[k] = rewards[k] + GAMMA * target_q_values[k]
 
-                print('y_t', y_t)
+                print('rewards', rewards)
 
                 loss += self.critic.model.train_on_batch([states, actions], y_t)
                 a_for_grad = self.actor.model.predict(states)
