@@ -159,7 +159,7 @@ class NeuralAgent():
                         y_t[k] = rewards[k]
                     else:
                         y_t[k] = rewards[k] + GAMMA * target_q_values[k]
-                        print('y_t[k] =' + y_t[k] + ' rewards[k]=' + rewards[k] + ' GAMMA=' + GAMMA + ' target_q_values[k]=' + target_q_values[k])
+                        print('y_t[k] =', y_t[k], ' rewards[k]=', rewards[k], ' GAMMA=', GAMMA, ' target_q_values[k]=', target_q_values[k])
 
 
                 print(len(batch))
