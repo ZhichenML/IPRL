@@ -12,7 +12,7 @@ import logging
 #try
 class TorcsEnv:
     terminal_judge_start = 100  # If after 100 timestep still no progress, terminated
-    termination_limit_progress = 0  # [km/h], episode terminates if car is running slower than this limit
+    termination_limit_progress = 5  # [km/h], episode terminates if car is running slower than this limit
     default_speed = 50
 
     initial_reset = True
@@ -33,8 +33,11 @@ class TorcsEnv:
         else:
             #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
             os.system('torcs -T -nofuel &')
-            os.system('sh autostart.sh')
-            #os.system(config_string)
+
+        time.sleep(0.5)
+        os.system('sh autostart.sh')
+        time.sleep(0.5)
+        #os.system(config_string)
 
         """
         # Modify here if you use multiple tracks in the environment
@@ -54,6 +57,14 @@ class TorcsEnv:
 
         high = np.array([np.inf for _ in range(30)])
         self.observation_space = spaces.Box(low=-high, high=high)
+
+        #if vision is False:
+        #    high = np.array([1., np.inf, np.inf, np.inf, 1., np.inf, 1., np.inf])
+        #    low = np.array([0., -np.inf, -np.inf, -np.inf, 0., -np.inf, 0., -np.inf])
+        #    self.observation_space = spaces.Box(low=low, high=high)
+        #else:
+        #    high = np.array([1., np.inf, np.inf, np.inf, 1., np.inf, 1., np.inf, 255])
+        #    low = np.array([0., -np.inf, -np.inf, -np.inf, 0., -np.inf
 
 
     def step(self, u):
@@ -143,7 +154,7 @@ class TorcsEnv:
         episode_terminate = False
 
         if self.terminal_judge_start < self.time_step:
-            if abs(trackPos) > 2.7:  # Episode is terminated if the car is out of track
+            if abs(track.any()) > 1 or abs(trackPos) > 2.7:  # Episode is terminated if the car is out of track
                 print('Out of Track', track.any(), trackPos)
                 reward = -200
                 episode_terminate = True
@@ -170,7 +181,7 @@ class TorcsEnv:
 
         if client.R.d['meta'] is True: # Send a reset signal
             self.initial_run = False
-            client.shutdown()
+            #client.shutdown()
             print("Resetting Torcs")
             #logging.info("##### Lap from gym: " + str(obs['lastLapTime']))
             #logging.info("###### Distance from gym: " + str(obs['distRaced']))
@@ -225,7 +236,9 @@ class TorcsEnv:
             os.system(config_string)
         else:
             os.system('torcs -T -nofuel &')
+            time.sleep(0.5)
             os.system('sh autostart.sh')
+            time.sleep(0.5)
             #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
             #os.system(config_string)
 
