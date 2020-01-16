@@ -43,7 +43,6 @@ class ParameterFinder():
         accel_diff = spatial.distance.euclidean(accel_acts, np.array(self.actions)[:, 1])
         brake_diff = spatial.distance.euclidean(brake_acts, np.array(self.actions)[:, 2])
         diff_total = -(steer_diff + accel_diff + brake_diff)/float(len(self.actions))
-        print('diff_toal', diff_total)
         return diff_total
 
     def pid_parameters(self, info_list):
@@ -52,7 +51,7 @@ class ParameterFinder():
         print(info_list[0][1])
         print(info_list[0][2])
         print(info_list[0][3])
-        gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 10}  # Optimizer configuration
+        gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 2}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
                                         {'sp0': info_list[0][0], 'sp1': info_list[0][1], 'sp2': info_list[0][2], 'spt': info_list[0][3],
@@ -133,7 +132,7 @@ def learn_policy(track_name):
         # Relabel Observations
         _, _, all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
         print('\n all_actions', all_actions[0])
-        
+
         # Learn new programmatic policy
         #print('observations: ', np.array(all_observations)[0])
         #print('actions', np.array(all_actions).shape)
@@ -170,11 +169,11 @@ def learn_policy(track_name):
 
     return None
 
-[
-    [(0.9199999999999999, 1.02), (0.0, 0.1), (49.93, 50.029999999999994), (-0.01, 0.01)],
-    [(3.9200000000000004, 4.0200000000000005), (-0.04, 0.060000000000000005), (48.74, 48.839999999999996), (-0.2, 0.8), (-0.1, 0.1), (0.0, 0.02)],
-    [(-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), (-0.001, 0.001)]
- ]
+#[
+#    [(0.9199999999999999, 1.02), (0.0, 0.1), (49.93, 50.029999999999994), (-0.01, 0.01)],
+#    [(3.9200000000000004, 4.0200000000000005), (-0.04, 0.060000000000000005), (48.74, 48.839999999999996), (-0.2, 0.8), (-0.1, 0.1), (0.0, 0.02)],
+#    [(-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), (-0.001, 0.001)]
+# ]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
