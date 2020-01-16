@@ -47,6 +47,10 @@ class ParameterFinder():
 
     def pid_parameters(self, info_list):
         print(info_list)
+        print(info_list[0][0])
+        print(info_list[0][1])
+        print(info_list[0][2])
+        print(info_list[0][3])
         gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 10}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
@@ -113,7 +117,7 @@ def learn_policy(track_name):
         logging.info("Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         if i_iter == 0:
-            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2)
+            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1)
         else:
             nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
@@ -154,9 +158,12 @@ def learn_policy(track_name):
     logging.info("Brake Controller" + str(brake_prog.pid_info()))
 
     return None
-[[[(0.9199999999999999, 1.02), (0.0, 0.1), (49.93, 50.029999999999994)], (-0.01, 0.01)],
- [[(3.9200000000000004, 4.0200000000000005), (-0.04, 0.060000000000000005), (48.74, 48.839999999999996)], (-0.2, 0.8), (-0.1, 0.1), (0.0, 0.02)],
- [[(-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05)], (-0.001, 0.001)]]
+
+[
+    [(0.9199999999999999, 1.02), (0.0, 0.1), (49.93, 50.029999999999994), (-0.01, 0.01)],
+    [(3.9200000000000004, 4.0200000000000005), (-0.04, 0.060000000000000005), (48.74, 48.839999999999996), (-0.2, 0.8), (-0.1, 0.1), (0.0, 0.02)],
+    [(-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05), (-0.001, 0.001)]
+ ]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
