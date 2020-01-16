@@ -152,7 +152,7 @@ class Client():
         # == Initialize Connection To Server ==
         self.so.settimeout(1)
 
-        n_fail = 1
+        n_fail = 5
         while True:
             # This string establishes track sensor angles! You can customize them.
             a= "-45 -19 -12 -7 -4 -2.5 -1.7 -1 -.5 0 .5 1 1.7 2.5 4 7 12 19 45"
@@ -176,7 +176,8 @@ class Client():
                     os.system('pkill torcs')
                     time.sleep(1.0)
                     if self.vision is False:
-                        config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &'
+                        #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &'
+                        config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
                         os.system(config_string)
                         # os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/practiceregcg.xml -nofuel -nodamage -nolaptime &')
                     else:

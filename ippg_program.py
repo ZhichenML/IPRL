@@ -84,7 +84,7 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
 
             ob, r_t, done, info = env.step(action_prior)
             #if np.mod(j, 1000) == 0:
-            logging.info("Episode " + str(i_episode) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+            logging.info("Episode " + str(i_episode) + "step " + str(j) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
             if done:
                 print('Done. Steps: ', j)
@@ -98,16 +98,17 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
 def learn_policy(track_name):
 
     # Define Pi_0
-    steer_prog = Controller([0.97, 0.05, 49.98], 0, 2, 0)
-    accel_prog = Controller([3.97, 0.01, 48.79], 0.30, 5, 0, 0.0, 0.01, 'obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
-    brake_prog = Controller([0, 0, 0], 0, 2, 0)
+    # def __init__(self, pid_constants=(0, 0, 0), pid_target=0.0, pid_sensor=0, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.0, condition='False')
+    steer_prog = Controller(pid_constants=[0.97, 0.05, 49.98], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
+    accel_prog = Controller(pid_constants=[3.97, 0.01, 48.79], pid_target=0.30, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.01, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
+    brake_prog = Controller(pid_constants=[0, 0, 0], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
 
     programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
 
     nn_agent = NeuralAgent(track_name=track_name)
     all_observations = []
     all_actions = []
-    for i_iter in range(6):
+    for i_iter in range(6): # optimize controller parameters
         logging.info("Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         if i_iter == 0:
