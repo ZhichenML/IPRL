@@ -31,8 +31,10 @@ class TorcsEnv:
             config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
             os.system(config_string)
         else:
-            config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
-            os.system(config_string)
+            #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
+            os.system('torcs -T -nofuel &')
+            os.system('sh autostart.sh')
+            #os.system(config_string)
 
         """
         # Modify here if you use multiple tracks in the environment
@@ -170,9 +172,9 @@ class TorcsEnv:
             self.initial_run = False
             client.shutdown()
             print("Resetting Torcs")
-            logging.info("##### Lap from gym: " + str(obs['lastLapTime']))
-            logging.info("###### Distance from gym: " + str(obs['distRaced']))
-            logging.info("######## Steps: " + str(self.time_step))
+            #logging.info("##### Lap from gym: " + str(obs['lastLapTime']))
+            #logging.info("###### Distance from gym: " + str(obs['distRaced']))
+            #logging.info("######## Steps: " + str(self.time_step))
             self.reset()
             client.respond_to_server()
 
@@ -222,8 +224,10 @@ class TorcsEnv:
             config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
             os.system(config_string)
         else:
-            config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
-            os.system(config_string)
+            os.system('torcs -T -nofuel &')
+            os.system('sh autostart.sh')
+            #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
+            #os.system(config_string)
 
     def agent_to_torcs(self, u):
         torcs_action = {'steer': u[0]}

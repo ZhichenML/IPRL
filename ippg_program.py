@@ -158,7 +158,7 @@ if __name__ == "__main__":
     logFileName = args.logname + args.trackfile[:-4]
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s",
+        format="%(asctime)s [%(threadName)-12.12s] %(module)s  [%(levelname)-5.5s]  %(message)s",
         handlers=[
             logging.FileHandler("{0}/{1}.log".format(logPath, logFileName)),
             logging.StreamHandler(sys.stdout)
