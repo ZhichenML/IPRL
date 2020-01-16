@@ -151,6 +151,7 @@ class NeuralAgent():
                 y_t = np.asarray([e[1] for e in batch])
 
                 target_q_values = self.critic.target_model.predict([new_states, self.actor.target_model.predict(new_states)])
+                print('target_q_values', target_q_values)
 
                 for k in range(len(batch)):
                     if dones[k]:
