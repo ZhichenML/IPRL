@@ -54,7 +54,7 @@ class ParameterFinder():
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=5, n_iter=10, kappa=5, **gp_params)
+        bo_pid.maximize(init_points=50, n_iter=10, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
 
         return bo_pid.max['params']
@@ -116,20 +116,20 @@ def learn_policy(track_name):
         logging.info("Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         if i_iter == 0:
-            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1)
+            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=300)
         else:
             nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
         # Collect Trajectories
 
         observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
-        print('observation_list', observation_list[0])
-        print('\n action_list', action_list[0])
+        #print('observation_list', observation_list[0])
+        #print('\n action_list', action_list[0])
 
         all_observations += observation_list
         # Relabel Observations
         _, _, all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
-        print('\n all_actions', all_actions[0])
+        #print('\n all_actions', all_actions[0])
 
         # Learn new programmatic policy
         #print('observations: ', np.array(all_observations)[0])
