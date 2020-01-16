@@ -154,10 +154,15 @@ class NeuralAgent():
 
 
                 for k in range(len(batch)):
+                    print(k)
                     if dones[k]:
                         y_t[k] = rewards[k]
                     else:
                         y_t[k] = rewards[k] + GAMMA * target_q_values[k]
+                        print('y_t[k] =' + y_t[k] + ' rewards[k]=' + rewards[k] + ' GAMMA=' + GAMMA + ' target_q_values[k]=' + target_q_values[k])
+
+
+                print(len(batch))
 
                 print('states', states)
                 print('\n actions', actions)
