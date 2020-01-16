@@ -19,6 +19,8 @@ import functools
 import copy
 from utils import *
 
+import os
+import pickle
 
 class FunctionOU(object):
     def function(self, x, mu, theta, sigma):
@@ -48,6 +50,10 @@ class NeuralAgent():
         self.critic = CriticNetwork(sess, state_dim, self.action_dim, self.batch_size, TAU, LRC)
         self.buff = ReplayBuffer(BUFFER_SIZE)  # Create replay buffer
         self.track_name = track_name
+
+        self.save_total_reward = []
+        self.save_total_step = []
+
 
     def update_neural(self, controllers, episode_count=200, tree=False):
         OU = FunctionOU()
@@ -88,6 +94,7 @@ class NeuralAgent():
                 (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
 
             total_reward = 0.
+
             tempObs = [[ob.speedX], [ob.angle], [ob.trackPos], [ob.speedY], [ob.speedZ], [ob.rpm],
                        list(ob.wheelSpinVel / 100.0), list(ob.track), [0, 0, 0]]
             window_list = [tempObs[:] for _ in range(window)]
@@ -178,14 +185,30 @@ class NeuralAgent():
                     break
             else:
                 env.end()
+
             self.lambda_mix = np.mean(lambda_store)
-            logging.info("#### Episode Reward: " + str(total_reward))
-            logging.info("####### Episode Length: " + str(j_iter))
-            logging.info("########## Lap Times: " + str(ob.lastLapTime))
-            logging.info("### Lambda Mix: " + str(self.lambda_mix))
-            logging.info("#### Total Steps: " + str(step))
-            logging.info("TOTAL REWARD @ " + str(i_episode) + "-th Episode  : Reward " + str(total_reward))
-            logging.info("Total Step: " + str(j_iter) + "  Distance" + str(ob.distRaced))
+            logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
+                         " Episode Length: " + str(j_iter) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
+            logging.info(" Lambda Mix: " + str(self.lambda_mix))
+
+            self.save_total_reward.append(total_reward)
+            self.save_total_step.append(j_iter)
+
+            if np.mod(i_episode+1, 10) == 0:
+                filename = "./Fig/save_total_reward"
+                dirname = os.path.dirname(filename)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                with open(filename,'wb') as f:
+                    pickle.dump(self.save_total_reward, f)
+
+                filename = "./Fig/save_total_step"
+                dirname = os.path.dirname(filename)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                with open(filename,"wb") as f:
+                    pickle.dump(self.save_total_step, f)
+
         env.end()  # This is for shutting down TORCS
         logging.info("Neural Policy Update Finish.")
         return None

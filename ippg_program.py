@@ -108,13 +108,13 @@ def learn_policy(track_name):
     nn_agent = NeuralAgent(track_name=track_name)
     all_observations = []
     all_actions = []
-    for i_iter in range(6): # optimize controller parameters
+    for i_iter in range(1): # optimize controller parameters
         logging.info("Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         if i_iter == 0:
-            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=200)
+            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=20)
         else:
-            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
+            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=10)
 
         # Collect Trajectories
         observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
