@@ -212,7 +212,7 @@ class NeuralAgent():
         lambda_max = 40.
         factor = 0.8
 
-        logging.info("TORCS Collection started with Lambda = " + str(self.lambda_mix))
+        logging.info("TORCS Data Collection started with Lambda = " + str(self.lambda_mix))
         ob = env.reset(relaunch=True)
 
         s_t = np.hstack(
@@ -255,6 +255,7 @@ class NeuralAgent():
             else:
                 observation_list.append(window_list[:])
             actions_list.append(mixed_act[:])
+
             ob, r_t, done, info = env.step(mixed_act)
 
             s_t1 = np.hstack(
@@ -282,8 +283,8 @@ class NeuralAgent():
             total_reward += r_t
             s_t = s_t1
             #if np.mod(step, 2000) == 0:
-            logging.info(" Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
-
+            #logging.info(" Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+            logging.info("Data Collection Finished!")
             step += 1
             if done:
                 break

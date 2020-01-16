@@ -103,7 +103,7 @@ def learn_policy(track_name):
     accel_prog = Controller(pid_constants=[3.97, 0.01, 48.79], pid_target=0.30, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.01, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
     brake_prog = Controller(pid_constants=[0, 0, 0], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
 
-    programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+    #programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
 
     nn_agent = NeuralAgent(track_name=track_name)
     all_observations = []
@@ -135,7 +135,7 @@ def learn_policy(track_name):
         accel_prog.update_parameters([new_paras['max_params'][i] for i in ['ap0', 'ap1', 'ap2']], new_paras['max_params']['apt'], new_paras['max_params']['api'], new_paras['max_params']['apc'])
         brake_prog.update_parameters([new_paras['max_params'][i] for i in ['bp0', 'bp1', 'bp2']], new_paras['max_params']['bpt'])
 
-        programmatic_game(steer_prog, accel_prog, brake_prog)
+        #programmatic_game(steer_prog, accel_prog, brake_prog)
 
     logging.info("Steering Controller" + str(steer_prog.pid_info()))
     logging.info("Acceleration Controller" + str(accel_prog.pid_info()))
