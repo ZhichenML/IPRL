@@ -46,20 +46,18 @@ class ParameterFinder():
         return diff_total
 
     def pid_parameters(self, info_list):
-        print(info_list)
-        print(info_list[0][0])
-        print(info_list[0][1])
-        print(info_list[0][2])
-        print(info_list[0][3])
-        gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 2}  # Optimizer configuration
+
+        gp_params = {"alpha": 1e-4, "n_restarts_optimizer": 2}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
                                         {'sp0': info_list[0][0], 'sp1': info_list[0][1], 'sp2': info_list[0][2], 'spt': info_list[0][3],
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
-        return bo_pid.res['max']
+        bo_pid.maximize(init_points=50, n_iter=10, kappa=5, **gp_params)
+        logging.info("BOret: " + bo_pid)
+
+        return bo_pid.res
 
 
 def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
