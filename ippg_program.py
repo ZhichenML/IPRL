@@ -131,8 +131,9 @@ def learn_policy(track_name):
 
         all_observations += observation_list
         # Relabel Observations
-        all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
-
+        _, _, all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
+        print('\n all_actions', all_actions[0])
+        
         # Learn new programmatic policy
         #print('observations: ', np.array(all_observations)[0])
         #print('actions', np.array(all_actions).shape)
