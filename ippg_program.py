@@ -43,6 +43,7 @@ class ParameterFinder():
         accel_diff = spatial.distance.euclidean(accel_acts, np.array(self.actions)[:, 1])
         brake_diff = spatial.distance.euclidean(brake_acts, np.array(self.actions)[:, 2])
         diff_total = -(steer_diff + accel_diff + brake_diff)/float(len(self.actions))
+        print('diff_toal', diff_total)
         return diff_total
 
     def pid_parameters(self, info_list):
@@ -57,6 +58,8 @@ class ParameterFinder():
                                         {'sp0': info_list[0][0], 'sp1': info_list[0][1], 'sp2': info_list[0][2], 'spt': info_list[0][3],
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
+
+        print("still good")
         bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
         return bo_pid.res['max']
 
