@@ -126,9 +126,20 @@ def learn_policy(track_name):
         # Learn new programmatic policy
         param_finder = ParameterFinder(all_observations, all_actions, steer_prog, accel_prog, brake_prog)
 
-        steer_ranges = [[create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(steer_prog.pid_info()[1], 0.01)]
-        accel_ranges = [[create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(accel_prog.pid_info()[1], 0.5), create_interval(accel_prog.pid_info()[2], 0.1), create_interval(accel_prog.pid_info()[3], 0.01)]
-        brake_ranges = [[create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(brake_prog.pid_info()[1], 0.001)]
+        #steer_ranges = [[create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(steer_prog.pid_info()[1], 0.01)]
+        #accel_ranges = [[create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(accel_prog.pid_info()[1], 0.5), create_interval(accel_prog.pid_info()[2], 0.1), create_interval(accel_prog.pid_info()[3], 0.01)]
+        #brake_ranges = [[create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(brake_prog.pid_info()[1], 0.001)]
+        steer_ranges = [create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)]
+        steer_ranges.append(create_interval(steer_prog.pid_info()[1], 0.01))
+
+        accel_ranges = [create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)]
+        accel_ranges.append(create_interval(accel_prog.pid_info()[1], 0.5))
+        accel_ranges.append(create_interval(accel_prog.pid_info()[2], 0.1))
+        accel_ranges.append(create_interval(accel_prog.pid_info()[3], 0.01))
+
+        brake_ranges = [create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)]
+        brake_ranges.append(create_interval(brake_prog.pid_info()[1], 0.001))
+
         pid_ranges = [steer_ranges, accel_ranges, brake_ranges]
         new_paras = param_finder.pid_parameters(pid_ranges)
 
@@ -143,7 +154,9 @@ def learn_policy(track_name):
     logging.info("Brake Controller" + str(brake_prog.pid_info()))
 
     return None
-
+[[[(0.9199999999999999, 1.02), (0.0, 0.1), (49.93, 50.029999999999994)], (-0.01, 0.01)],
+ [[(3.9200000000000004, 4.0200000000000005), (-0.04, 0.060000000000000005), (48.74, 48.839999999999996)], (-0.2, 0.8), (-0.1, 0.1), (0.0, 0.02)],
+ [[(-0.05, 0.05), (-0.05, 0.05), (-0.05, 0.05)], (-0.001, 0.001)]]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
