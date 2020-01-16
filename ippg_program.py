@@ -124,17 +124,21 @@ def learn_policy(track_name):
             nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
         # Collect Trajectories
+
         observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
+        print('observation_list', observation_list[0])
+        print('\n action_list', action_list[0])
+
         all_observations += observation_list
         # Relabel Observations
         all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
 
         # Learn new programmatic policy
-        print('observations: ', np.array(all_observations)[0])
-        print('actions', np.array(all_actions)[0])
+        #print('observations: ', np.array(all_observations)[0])
+        #print('actions', np.array(all_actions).shape)
         param_finder = ParameterFinder(all_observations, all_actions, steer_prog, accel_prog, brake_prog)
-        print('observations: ', np.array(all_observations).shape())
-        print('actions', np.array(all_actions).shape())
+        #print('observations: ', np.array(all_observations).shape())
+        #print('actions', np.array(all_actions).shape())
 
         #steer_ranges = [[create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(steer_prog.pid_info()[1], 0.01)]
         #accel_ranges = [[create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(accel_prog.pid_info()[1], 0.5), create_interval(accel_prog.pid_info()[2], 0.1), create_interval(accel_prog.pid_info()[3], 0.01)]
