@@ -130,6 +130,7 @@ def learn_policy(track_name):
         all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
 
         # Learn new programmatic policy
+        print('observations: ', np.array(all_observations)[0])
         param_finder = ParameterFinder(all_observations, all_actions, steer_prog, accel_prog, brake_prog)
         print('observations: ', np.array(all_observations).shape())
         print('actions', np.array(all_actions).shape())
