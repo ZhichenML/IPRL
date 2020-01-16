@@ -46,6 +46,7 @@ class ParameterFinder():
         return diff_total
 
     def pid_parameters(self, info_list):
+        print(info_list)
         gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 10}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
