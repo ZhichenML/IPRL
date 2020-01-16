@@ -169,8 +169,8 @@ class NeuralAgent():
                 lambda_store[j_iter] = lambda_track
                 base_q = copy.deepcopy(target_q_values)
 
-                #if np.mod(step, 2000) == 0:
-                logging.info("Episode " + str(i_episode) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+                if np.mod(step, 2000) == 0:
+                    logging.info("Episode " + str(i_episode) + "Step " + str(j_iter) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
                 step += 1
                 if done:
@@ -186,7 +186,7 @@ class NeuralAgent():
             logging.info("TOTAL REWARD @ " + str(i_episode) + "-th Episode  : Reward " + str(total_reward))
             logging.info("Total Step: " + str(j_iter) + "  Distance" + str(ob.distRaced))
         env.end()  # This is for shutting down TORCS
-        logging.info("Finish.")
+        logging.info("Neural Policy Update Finish.")
         return None
 
     def collect_data(self, controllers, tree=False):
