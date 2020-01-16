@@ -159,7 +159,9 @@ class NeuralAgent():
                     else:
                         y_t[k] = rewards[k] + GAMMA * target_q_values[k]
 
-                print('rewards', rewards)
+                print('states', states)
+                print('\n actions', actions)
+                print('y_t', y_t)
 
                 loss += self.critic.model.train_on_batch([states, actions], y_t)
                 a_for_grad = self.actor.model.predict(states)
