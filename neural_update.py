@@ -148,7 +148,7 @@ class NeuralAgent():
                 rewards = np.asarray([e[2] for e in batch])
                 new_states = np.asarray([e[3] for e in batch])
                 dones = np.asarray([e[4] for e in batch])
-                y_t = np.asarray([e[1] for e in batch])
+                y_t = np.zeros((states.shape[0],1)) #np.asarray([e[1] for e in batch])
 
                 target_q_values = self.critic.target_model.predict([new_states, self.actor.target_model.predict(new_states)])
 
