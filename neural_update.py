@@ -195,14 +195,14 @@ class NeuralAgent():
             self.save_total_step.append(j_iter)
 
             if np.mod(i_episode+1, 10) == 0:
-                filename = "./Fig/save_total_reward"
+                filename = "./Fig/iprl_save_total_reward"
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
                 with open(filename,'wb') as f:
                     pickle.dump(self.save_total_reward, f)
 
-                filename = "./Fig/save_total_step"
+                filename = "./Fig/iprl_save_total_step"
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
