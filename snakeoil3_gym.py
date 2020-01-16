@@ -152,7 +152,7 @@ class Client():
         # == Initialize Connection To Server ==
         self.so.settimeout(1)
 
-        n_fail = 5
+        n_fail = 2
         while True:
             # This string establishes track sensor angles! You can customize them.
             a= "-45 -19 -12 -7 -4 -2.5 -1.7 -1 -.5 0 .5 1 1.7 2.5 4 7 12 19 45"
@@ -164,7 +164,7 @@ class Client():
             except socket.error as emsg:
                 print('failed here')
                 sys.exit(-1)
-            sockdata= str()
+            sockdata= unicode() # str()
             try:
                 sockdata,addr= self.so.recvfrom(data_size)
                 sockdata = sockdata.decode('utf-8')
@@ -239,7 +239,7 @@ class Client():
     def get_servers_input(self):
         '''Server's input is stored in a ServerState object'''
         if not self.so: return
-        sockdata= str()
+        sockdata= unicode() # str()
 
         while True:
             try:
@@ -287,8 +287,7 @@ class Client():
 
     def shutdown(self):
         if not self.so: return
-        logging.info("############# Lap from Snake: " + str(self.S.d['lastLapTime']))
-        logging.info("######### Dist from Snake: " + str(self.S.d['distRaced']))
+        #logging.info("######### Lap from Snake: " + str(self.S.d['lastLapTime']) + " Dist from Snake: " + str(self.S.d['distRaced']))
         print(("Race terminated or %d steps elapsed. Shutting down %d."
                % (self.maxSteps,self.port)))
         self.so.close()
@@ -299,7 +298,7 @@ class Client():
 class ServerState():
     '''What the server is reporting right now.'''
     def __init__(self):
-        self.servstr= str()
+        self.servstr= unicode() # str()
         self.d= dict()
 
     def parse_server_str(self, server_string):
