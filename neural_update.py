@@ -308,10 +308,12 @@ class NeuralAgent():
             s_t = s_t1
             #if np.mod(step, 2000) == 0:
             #logging.info(" Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
-            logging.info("Data Collection Finished!")
             step += 1
             if done:
                 break
+
+        logging.info("Data Collection Finished!")
+
         env.end()
 
         return observation_list, actions_list
