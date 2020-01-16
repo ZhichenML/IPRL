@@ -193,6 +193,7 @@ class NeuralAgent():
                 step += 1
                 if done:
                     break
+
             else:
                 env.end()
 
@@ -203,6 +204,20 @@ class NeuralAgent():
 
             self.save_total_reward.append(total_reward)
             self.save_total_step.append(j_iter)
+
+
+            if np.mod(i_episode+1, 5) == 0:
+                print("Now we save model")
+                os.remove("actormodel.h5")
+                self.actor.model.save_weights("actormodel.h5", overwrite=True)
+                with open("actormodel.json", "w") as outfile:
+                    json.dump(self.actor.model.to_json(), outfile)
+
+                os.remove("criticmodel.h5")
+                self.critic.model.save_weights("criticmodel.h5", overwrite=True)
+                with open("criticmodel.json", "w") as outfile:
+                    json.dump(self.critic.model.to_json(), outfile)
+
 
             if np.mod(i_episode+1, 10) == 0:
                 filename = "./Fig/iprl_save_total_reward"
