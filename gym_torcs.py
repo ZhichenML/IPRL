@@ -174,7 +174,7 @@ class TorcsEnv:
             logging.info("###### Distance from gym: " + str(obs['distRaced']))
             logging.info("######## Steps: " + str(self.time_step))
             self.reset()
-            #client.respond_to_server()
+            client.respond_to_server()
 
         self.time_step += 1
 
@@ -206,6 +206,7 @@ class TorcsEnv:
 
         self.initial_reset = False
         return self.get_obs()
+
 
     def end(self):
         os.system('pkill torcs')

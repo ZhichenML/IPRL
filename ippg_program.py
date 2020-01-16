@@ -148,8 +148,8 @@ def learn_policy(track_name):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--trackfile', default='practgt2.xml')
-    parser.add_argument('--seed', default=None)
+    parser.add_argument('--trackfile', default='practice.xml') #
+    parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
     args = parser.parse_args()
 

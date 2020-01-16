@@ -76,7 +76,7 @@ class NeuralAgent():
 
 
         for i_episode in range(episode_count):
-            logging.info("Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
+            logging.info("/n Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
             if np.mod(i_episode, 3) == 0:
                 ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
             else:
@@ -170,7 +170,7 @@ class NeuralAgent():
                 base_q = copy.deepcopy(target_q_values)
 
                 if np.mod(step, 2000) == 0:
-                    logging.info("Episode " + str(i_episode) + "Step " + str(j_iter) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+                    logging.info("Episode " + str(i_episode) + " Step " + str(j_iter) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
                 step += 1
                 if done:
