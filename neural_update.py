@@ -162,7 +162,7 @@ class NeuralAgent():
                         #print('y_t[k] =', y_t[k], ' rewards[k]=', rewards[k], ' GAMMA=', GAMMA, ' target_q_values[k]=', target_q_values[k])
 
 
-                print('len(batch):', len(batch))
+                #print('len(batch):', len(batch))
 
                 #print('states', states)
                 #print('\n actions', actions)
