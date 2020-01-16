@@ -164,7 +164,7 @@ class Client():
             except socket.error as emsg:
                 print('failed here')
                 sys.exit(-1)
-            sockdata= unicode() # str()
+            sockdata= str() # str()
             try:
                 sockdata,addr= self.so.recvfrom(data_size)
                 sockdata = sockdata.decode('utf-8')
@@ -239,7 +239,7 @@ class Client():
     def get_servers_input(self):
         '''Server's input is stored in a ServerState object'''
         if not self.so: return
-        sockdata= unicode() # str()
+        sockdata= str() # str()
 
         while True:
             try:
@@ -298,7 +298,7 @@ class Client():
 class ServerState():
     '''What the server is reporting right now.'''
     def __init__(self):
-        self.servstr= unicode() # str()
+        self.servstr= str() # str()
         self.d= dict()
 
     def parse_server_str(self, server_string):
