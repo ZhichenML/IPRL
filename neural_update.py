@@ -82,6 +82,16 @@ class NeuralAgent():
 
         logging.info("TORCS Experiment Start with Lambda = " + str(self.lambda_mix))
 
+        #Now load the weight
+        print("Now we load the weight")
+        try:
+            self.actor.model.load_weights("actormodel.h5")
+            self.critic.model.load_weights("criticmodel.h5")
+            self.actor.target_model.load_weights("actormodel.h5")
+            self.critic.target_model.load_weights("criticmodel.h5")
+            print("Weight load successfully")
+        except:
+            print("Cannot find the weight")
 
         for i_episode in range(episode_count):
             logging.info('\n')
@@ -102,16 +112,6 @@ class NeuralAgent():
             window_list = [tempObs[:] for _ in range(window)]
 
 
-            #Now load the weight
-            print("Now we load the weight")
-            try:
-                self.actor.model.load_weights("actormodel.h5")
-                self.critic.model.load_weights("criticmodel.h5")
-                self.actor.target_model.load_weights("actormodel.h5")
-                self.critic.target_model.load_weights("criticmodel.h5")
-                print("Weight load successfully")
-            except:
-                print("Cannot find the weight")
 
             for j_iter in range(max_steps):
                 if tree:
