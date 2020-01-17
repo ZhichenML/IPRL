@@ -53,6 +53,8 @@ class NeuralAgent():
 
         self.save_total_reward = []
         self.save_total_step = []
+        self.save_test_total_reward = []
+        self.save_test_total_step = []
 
 
     def update_neural(self, controllers, episode_count=200, tree=False):
@@ -219,12 +221,12 @@ class NeuralAgent():
 
             if np.mod(i_episode+1, 5) == 0:
                 print("Now we save model")
-                os.remove("actormodel.h5")
+                #os.remove("actormodel.h5")
                 self.actor.model.save_weights("actormodel.h5", overwrite=True)
                 with open("actormodel.json", "w") as outfile:
                     json.dump(self.actor.model.to_json(), outfile)
 
-                os.remove("criticmodel.h5")
+                #os.remove("criticmodel.h5")
                 self.critic.model.save_weights("criticmodel.h5", overwrite=True)
                 with open("criticmodel.json", "w") as outfile:
                     json.dump(self.critic.model.to_json(), outfile)
