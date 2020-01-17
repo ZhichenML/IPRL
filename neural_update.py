@@ -100,6 +100,17 @@ class NeuralAgent():
             window_list = [tempObs[:] for _ in range(window)]
 
 
+            #Now load the weight
+            print("Now we load the weight")
+            try:
+                self.actor.model.load_weights("actormodel.h5")
+                self.critic.model.load_weights("criticmodel.h5")
+                self.actor.target_model.load_weights("actormodel.h5")
+                self.critic.target_model.load_weights("criticmodel.h5")
+                print("Weight load successfully")
+            except:
+                print("Cannot find the weight")
+
             for j_iter in range(max_steps):
                 if tree:
                     tree_obs = [sensor for obs in tempObs[:-1] for sensor in obs]
