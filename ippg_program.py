@@ -182,10 +182,11 @@ if __name__ == "__main__":
 
     random.seed(args.seed)
     logPath = 'logs'
-    logFileName = args.logname + args.trackfile[:-4]
+    now = time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime(time.time()))
+    logFileName = args.logname + args.trackfile[:-4] + now
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s [%(threadName)-12.12s] %(module)s  [%(levelname)-5.5s]  %(message)s",
+        format="%(asctime)s [%(threadName)-12.12s] %(module)s  %(funcName)s %(lineno)d [%(levelname)-5.5s]  %(message)s",
         handlers=[
             logging.FileHandler("{0}/{1}.log".format(logPath, logFileName)),
             logging.StreamHandler(sys.stdout)
