@@ -35,7 +35,7 @@ class NeuralAgent():
         LRC = 0.001  # Lerning rate for Critic
         state_dim = 29  # of sensors input
         self.batch_size = 32
-        self.lambda_mix = 10.0
+        self.lambda_mix = 0.0
         self.action_dim = 3  # Steering/Acceleration/Brake
 
 
@@ -83,7 +83,7 @@ class NeuralAgent():
 
         for i_episode in range(episode_count):
             logging.info('\n')
-            logging.info("Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
+            logging.info("New Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
             if np.mod(i_episode, 3) == 0:
                 ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
             else:
@@ -208,7 +208,7 @@ class NeuralAgent():
             else:
                 env.end()
 
-            self.lambda_mix = np.mean(lambda_store)
+            self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
                          " Episode Length: " + str(j_iter) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
             logging.info(" Lambda Mix: " + str(self.lambda_mix))
