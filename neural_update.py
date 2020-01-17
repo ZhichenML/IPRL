@@ -83,15 +83,15 @@ class NeuralAgent():
         logging.info("TORCS Experiment Start with Lambda = " + str(self.lambda_mix))
 
         #Now load the weight
-        print("Now we load the weight")
+        logging.info("Now we load the weight")
         try:
             self.actor.model.load_weights("actormodel.h5")
             self.critic.model.load_weights("criticmodel.h5")
             self.actor.target_model.load_weights("actormodel.h5")
             self.critic.target_model.load_weights("criticmodel.h5")
-            print("Weight load successfully")
+            logging.info("Weight load successfully")
         except:
-            print("Cannot find the weight")
+            logging.info("Cannot find the weight")
 
         for i_episode in range(episode_count):
             logging.info('\n')
@@ -218,6 +218,8 @@ class NeuralAgent():
             self.save_total_reward.append(total_reward)
             self.save_total_step.append(j_iter)
 
+            # test
+            #if np.mod(i_episode+1, )
 
             if np.mod(i_episode+1, 5) == 0:
                 print("Now we save model")
