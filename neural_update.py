@@ -84,6 +84,7 @@ class NeuralAgent():
         for j_iter in range(max_steps):
 
             a_t = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
+            print('test a_t:', a_t)
 
             ob, r_t, done, info = env.step(a_t)
 
