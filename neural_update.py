@@ -51,10 +51,56 @@ class NeuralAgent():
         self.buff = ReplayBuffer(BUFFER_SIZE)  # Create replay buffer
         self.track_name = track_name
 
+
         self.save_total_reward = []
         self.save_total_step = []
         self.save_test_total_reward = []
         self.save_test_total_step = []
+
+        self.save = dict(total_reward=[],
+                         total_step=[],
+                         race_dist=[],
+                         lap_time=[],
+                         test_total_reward=[],
+                         test_total_step=[],
+                         test_race_dist=[],
+                         test_lap_time=[]
+                         )
+
+
+    def rollout(self):
+        max_steps = 10000
+
+        vision = False
+
+        env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
+
+        ob = env.reset(relaunch=True)
+        s_t = np.hstack(
+            (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
+
+        total_reward = 0.
+
+        for j_iter in range(max_steps):
+
+            a_t = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
+
+            ob, r_t, done, info = env.step(a_t)
+
+            s_t = np.hstack(
+                (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
+
+            total_reward += r_t
+
+
+            if done: break
+
+            #logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
+            #            " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
+
+        env.end()  # This is for shutting down TORCS
+
+        return total_reward, j_iter+1, ob.distRaced, ob.lastLapTime
 
 
     def update_neural(self, controllers, episode_count=200, tree=False):
@@ -212,14 +258,24 @@ class NeuralAgent():
 
             self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(j_iter) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
+                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
             logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
-            self.save_total_reward.append(total_reward)
-            self.save_total_step.append(j_iter)
+            self.save['total_reward'].append(total_reward)
+            self.save['total_step'].append(j_iter+1)
+            self.save['race_dist'].append(ob.distRaced)
+            self.save['lap_time'].append(ob.lastLapTime)
+            #self.save_total_reward.append(total_reward)
+            #self.save_total_step.append(j_iter+1)
 
             # test
-            #if np.mod(i_episode+1, )
+            if np.mod(i_episode+1, 10) == 0:
+                test_total_reward, test_step, test_race_dist, test_laptime = self.rollout()
+                self.save['test_total_reward'].append(test_total_reward)
+                self.save['test_total_step'].append(test_step)
+                self.save['test_race_dist'].append(test_race_dist)
+                self.save['test_lap_time'].append(test_laptime)
+
 
             if np.mod(i_episode+1, 5) == 0:
                 print("Now we save model")
@@ -235,7 +291,13 @@ class NeuralAgent():
 
 
             if np.mod(i_episode+1, 10) == 0:
-                filename = "./Fig/iprl_save_total_reward"
+                filename = "./Fig/iprl_save"
+                dirname = os.path.dirname(filename)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                with open(filename,'wb') as f:
+                    pickle.dump(self.save, f)
+                '''filename = "./Fig/iprl_save_total_reward"
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
@@ -247,7 +309,7 @@ class NeuralAgent():
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
                 with open(filename,"wb") as f:
-                    pickle.dump(self.save_total_step, f)
+                    pickle.dump(self.save_total_step, f)'''
 
         env.end()  # This is for shutting down TORCS
         logging.info("Neural Policy Update Finish.")
