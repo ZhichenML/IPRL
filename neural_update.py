@@ -148,6 +148,7 @@ class NeuralAgent():
                 ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
             else:
                 ob = env.reset()
+            print('ob: ', ob)
 
             #[ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, list(ob.wheelSpinVel / 100.0), list(ob.track)]
             s_t = np.hstack(
