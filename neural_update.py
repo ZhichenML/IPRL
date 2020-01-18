@@ -273,7 +273,7 @@ class NeuralAgent():
             #self.save_total_step.append(j_iter+1)
 
             # test
-            if np.mod(i_episode+1, 2) == 0:
+            if np.mod(i_episode+1, 10) == 0:
                 test_total_reward, test_step, test_race_dist, test_laptime = self.rollout()
                 self.save['test_total_reward'].append(test_total_reward)
                 self.save['test_total_step'].append(test_step)
