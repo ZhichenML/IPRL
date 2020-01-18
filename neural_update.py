@@ -100,7 +100,7 @@ class NeuralAgent():
             #logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
             #            " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
 
-        env.end()  # This is for shutting down TORCS
+        #env.end()  # This is for shutting down TORCS
 
         return total_reward, j_iter+1, ob.distRaced, ob.lastLapTime
 
@@ -196,7 +196,7 @@ class NeuralAgent():
 
                 mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
 
-                print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t, 'mixed_act: ', mixed_act)
+                #print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t, 'mixed_act: ', mixed_act)
                 ob, r_t, done, info = env.step(mixed_act)
 
                 s_t1 = np.hstack(
@@ -263,7 +263,7 @@ class NeuralAgent():
             self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
                          " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
-            logging.info(" Lambda Mix: " + str(self.lambda_mix))
+            #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
             self.save['total_reward'].append(total_reward)
             self.save['total_step'].append(j_iter+1)
