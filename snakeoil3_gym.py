@@ -248,7 +248,6 @@ class Client():
                 sockdata = sockdata.decode('utf-8')
             except socket.error as emsg:
                 print('.e', end=' ')
-                continue
                 return # ???????????
                 #print "Waiting for data on %d.............." % self.port
             if '***identified***' in sockdata:
