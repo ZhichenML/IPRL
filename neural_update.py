@@ -191,10 +191,11 @@ class NeuralAgent():
                 a_t[0][0] = a_t_original[0][0] + noise_t[0][0]
                 a_t[0][1] = a_t_original[0][1] + noise_t[0][1]
                 a_t[0][2] = a_t_original[0][2] + noise_t[0][2]
-                print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t)
+
 
                 mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
 
+                print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t, 'mixed_act: ', mixed_act)
                 ob, r_t, done, info = env.step(mixed_act)
 
                 s_t1 = np.hstack(
