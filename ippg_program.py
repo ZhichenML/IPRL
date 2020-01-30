@@ -116,7 +116,7 @@ def learn_policy(track_name):
         logging.info("Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         if i_iter == 0:
-            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1000)
+            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
         else:
             nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
