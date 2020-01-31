@@ -73,7 +73,7 @@ class NeuralAgent():
 
         vision = False
 
-        env = TorcsEnv(vision=vision, throttle=False, gear_change=False, track_name=self.track_name)
+        env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
 
         ob = env.reset(relaunch=True)
         s_t = np.hstack(
@@ -121,7 +121,7 @@ class NeuralAgent():
 
 
         # Generate a Torcs environment
-        env = TorcsEnv(vision=vision, throttle=False, gear_change=False, track_name=self.track_name)
+        env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
 
         window = 5
         lambda_store = np.zeros((max_steps, 1))
@@ -336,7 +336,7 @@ class NeuralAgent():
 
 
         # Generate a Torcs environment
-        env = TorcsEnv(vision=vision, throttle=False, gear_change=False, track_name=self.track_name)
+        env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
 
         window = 5
         lambda_store = np.zeros((max_steps, 1))
