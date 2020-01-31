@@ -88,6 +88,8 @@ class NeuralAgent():
             # print('test a_t:', a_t)
 
             ob, r_t, done, info = env.step(a_t)
+            if np.mod(j_iter +1,20) == 0:
+                print('ob: ', ob)
 
             s_t = np.hstack(
                 (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
@@ -148,7 +150,7 @@ class NeuralAgent():
                 ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
             else:
                 ob = env.reset()
-            print('ob: ', ob)
+            #print('ob: ', ob)
 
             #[ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, list(ob.wheelSpinVel / 100.0), list(ob.track)]
             s_t = np.hstack(
@@ -263,7 +265,7 @@ class NeuralAgent():
 
             self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
+                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " distFromStartLine:" + str(ob.distFromStartLine) + " Lap Times: " + str(ob.lastLapTime))
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
             self.save['total_reward'].append(total_reward)
