@@ -265,7 +265,7 @@ class NeuralAgent():
 
             self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " distFromStartLine:" + str(ob.distFromStartLine) + " Lap Times: " + str(ob.lastLapTime))
+                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
             self.save['total_reward'].append(total_reward)
