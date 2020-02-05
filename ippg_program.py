@@ -88,11 +88,13 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
 
             ob, r_t, done, info = env.step(action_prior)
             #if np.mod(j, 1000) == 0:
-        logging.info("Episode: " + str(i_episode) + " step: " + str(j+1) + " Distance: " + str(ob.distRaced) + ' ' + str(ob.distFromStart) + " Lap Times: " + str(ob.lastLapTime))
 
             if done:
                 print('Done. Steps: ', j)
                 break
+                
+        logging.info("Episode: " + str(i_episode) + " step: " + str(j+1) + " Distance: " + str(ob.distRaced) + ' ' + str(ob.distFromStart) + " Lap Times: " + str(ob.lastLapTime))
+
 
         env.end()  # This is for shutting down TORCS
         logging.info("Finish.")
