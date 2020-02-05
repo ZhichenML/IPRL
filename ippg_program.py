@@ -61,8 +61,8 @@ class ParameterFinder():
 
 
 def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
-    episode_count = 2
-    max_steps = 100000
+    episode_count = 5
+    max_steps = 10000
     window = 5
 
     # Generate a Torcs environment
@@ -88,7 +88,7 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
 
             ob, r_t, done, info = env.step(action_prior)
             #if np.mod(j, 1000) == 0:
-            logging.info("Episode " + str(i_episode) + "step " + str(j) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+            logging.info("Episode: " + str(i_episode) + " step: " + str(j+1) + " Distance: " + str(ob.distRaced) + ' ' + str(ob.distFromStart) + " Lap Times: " + str(ob.lastLapTime))
 
             if done:
                 print('Done. Steps: ', j)
@@ -99,15 +99,21 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
 
 
 
-def learn_policy(track_name):
+def learn_policy(track_name, test_program):
 
     # Define Pi_0
     # def __init__(self, pid_constants=(0, 0, 0), pid_target=0.0, pid_sensor=0, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.0, condition='False')
+    #steer_prog = Controller(pid_constants=[0.97, 0.05, 49.98], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
+    #accel_prog = Controller(pid_constants=[3.97, 0.01, 48.79], pid_target=0.30, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.01, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
+    #brake_prog = Controller(pid_constants=[0, 0, 0], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
+
     steer_prog = Controller(pid_constants=[0.97, 0.05, 49.98], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
     accel_prog = Controller(pid_constants=[3.97, 0.01, 48.79], pid_target=0.30, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.01, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
     brake_prog = Controller(pid_constants=[0, 0, 0], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
 
-    #programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+    if test_program == True:
+        programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+        return None
 
     nn_agent = NeuralAgent(track_name=track_name)
     all_observations = []
@@ -159,7 +165,7 @@ def learn_policy(track_name):
         accel_prog.update_parameters([new_paras[i] for i in ['ap0', 'ap1', 'ap2']], new_paras['apt'], new_paras['api'], new_paras['apc'])
         brake_prog.update_parameters([new_paras[i] for i in ['bp0', 'bp1', 'bp2']], new_paras['bpt'])
 
-        #programmatic_game(steer_prog, accel_prog, brake_prog)
+        #programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
 
     logging.info("Steering Controller" + str(steer_prog.pid_info()))
     logging.info("Acceleration Controller" + str(accel_prog.pid_info()))
@@ -178,6 +184,7 @@ if __name__ == "__main__":
     parser.add_argument('--trackfile', default='practice.xml') #
     parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
+    parser.add_argument('--test_program', default=False)
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -192,4 +199,4 @@ if __name__ == "__main__":
             logging.StreamHandler(sys.stdout)
         ])
     logging.info("Logging started with level: INFO")
-    learn_policy(track_name=args.trackfile)
+    learn_policy(track_name=args.trackfile, test_program=args.test_program)
