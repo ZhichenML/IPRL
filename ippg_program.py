@@ -61,7 +61,7 @@ class ParameterFinder():
 
 
 def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
-    episode_count = 5
+    episode_count = 1
     max_steps = 10000
     window = 5
 
@@ -92,7 +92,7 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
             if done:
                 print('Done. Steps: ', j)
                 break
-                
+
         logging.info("Episode: " + str(i_episode) + " step: " + str(j+1) + " Distance: " + str(ob.distRaced) + ' ' + str(ob.distFromStart) + " Lap Times: " + str(ob.lastLapTime))
 
 
