@@ -285,7 +285,7 @@ class TorcsEnv:
                                wheelSpinVel=np.array(raw_obs['wheelSpinVel'], dtype=np.float32),
                                lastLapTime=np.array(raw_obs['lastLapTime'], dtype=np.float32)/1.0,
                                distRaced=np.array(raw_obs['distRaced'], dtype=np.float32)/1.0,
-                               distFromStartLine=np.array(raw_obs['distFromStartLine'], np.float32))
+                               distFromStart=np.array(raw_obs['distFromStart'], np.float32))
         else:
             names = ['focus',
                      'speedX', 'speedY', 'speedZ', 'angle',
