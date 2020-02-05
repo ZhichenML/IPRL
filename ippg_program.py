@@ -184,7 +184,7 @@ if __name__ == "__main__":
     parser.add_argument('--trackfile', default='practice.xml') #
     parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
-    parser.add_argument('--test_program', default=False)
+    parser.add_argument('--test_program', default=True)
     args = parser.parse_args()
 
     random.seed(args.seed)
