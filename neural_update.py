@@ -130,8 +130,9 @@ class NeuralAgent():
         lambda_max = 40.
         factor = 0.8
 
-        logging.info("TORCS Experiment Start with Lambda = " + str(self.lambda_mix))
+        logging.info("TORCS Experiment Start!") # with Lambda = " + str(self.lambda_mix))
 
+        '''
         #Now load the weight
         logging.info("Now we load the weight")
         try:
@@ -142,6 +143,7 @@ class NeuralAgent():
             logging.info("Weight load successfully")
         except:
             logging.info("Cannot find the weight")
+        '''
 
         for i_episode in range(episode_count):
             logging.info('\n')
@@ -265,7 +267,7 @@ class NeuralAgent():
 
             self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
+                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + str(ob.distFromStart) + " Lap Times: " + str(ob.lastLapTime))
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
             self.save['total_reward'].append(total_reward)

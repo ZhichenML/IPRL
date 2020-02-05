@@ -272,7 +272,7 @@ class TorcsEnv:
             names = ['speedX', 'speedY', 'speedZ', 'angle', 'rpm',
                      'track',
                      'trackPos',
-                     'wheelSpinVel', 'lastLapTime', 'distRaced']
+                     'wheelSpinVel', 'lastLapTime', 'distRaced', 'distFromStart']
                      #'distFromStartLine']
             Observation = col.namedtuple('Observaion', names)
             return Observation(speedX=np.array(raw_obs['speedX'], dtype=np.float32)/300.0,
