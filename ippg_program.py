@@ -47,7 +47,7 @@ class ParameterFinder():
 
     def pid_parameters(self, info_list):
 
-        gp_params = {"alpha": 1e-4, "n_restarts_optimizer": 10}  # Optimizer configuration
+        gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 10}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
                                         {'sp0': info_list[0][0], 'sp1': info_list[0][1], 'sp2': info_list[0][2], 'spt': info_list[0][3],
@@ -186,7 +186,7 @@ def learn_policy(track_name, test_program):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--trackfile', default='practice.xml') #
+    parser.add_argument('--trackfile', default='practgt2.xml') # practgt2 practice
     parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
     parser.add_argument('--test_program', default=False)
