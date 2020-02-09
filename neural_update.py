@@ -202,7 +202,7 @@ class NeuralAgent():
                 mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
 
                 #print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t, 'mixed_act: ', mixed_act)
-                ob, r_t, done, info = env.step(mixed_act)
+                ob, r_t, done, info = env.step(a_t[0]) #(mixed_act)
 
                 s_t1 = np.hstack(
                     (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))

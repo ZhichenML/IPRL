@@ -47,14 +47,14 @@ class ParameterFinder():
 
     def pid_parameters(self, info_list):
 
-        gp_params = {"alpha": 1e-4, "n_restarts_optimizer": 2}  # Optimizer configuration
+        gp_params = {"alpha": 1e-4, "n_restarts_optimizer": 10}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
                                         {'sp0': info_list[0][0], 'sp1': info_list[0][1], 'sp2': info_list[0][2], 'spt': info_list[0][3],
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=50, n_iter=10, kappa=5, **gp_params)
+        bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
 
         return bo_pid.max['params']
@@ -126,7 +126,7 @@ def learn_policy(track_name, test_program):
         logging.info("Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         if i_iter == 0:
-            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1500)
+            nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
         else:
             nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
@@ -169,7 +169,8 @@ def learn_policy(track_name, test_program):
         accel_prog.update_parameters([new_paras[i] for i in ['ap0', 'ap1', 'ap2']], new_paras['apt'], new_paras['api'], new_paras['apc'])
         brake_prog.update_parameters([new_paras[i] for i in ['bp0', 'bp1', 'bp2']], new_paras['bpt'])
 
-        #programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+        programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+
 
     logging.info("Steering Controller" + str(steer_prog.pid_info()))
     logging.info("Acceleration Controller" + str(accel_prog.pid_info()))
@@ -188,7 +189,7 @@ if __name__ == "__main__":
     parser.add_argument('--trackfile', default='practice.xml') #
     parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
-    parser.add_argument('--test_program', default=True)
+    parser.add_argument('--test_program', default=False)
     args = parser.parse_args()
 
     random.seed(args.seed)
