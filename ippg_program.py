@@ -114,7 +114,9 @@ def learn_policy(track_name, test_program):
     brake_prog = Controller(pid_constants=[-0.015872359140464996, 0.01975284177188144, 0.004113270233727151], pid_target=0.0005206986363191781, pid_sensor=2, pid_sub_sensor=0)
 
     if test_program == True:
-        programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+        for seeds in {1337, 1338, 1339, 1340, 1341, 1342, 1343}:
+            random.seed(seeds)
+            programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
         return None
 
     nn_agent = NeuralAgent(track_name=track_name)
