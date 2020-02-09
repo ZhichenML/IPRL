@@ -239,7 +239,7 @@ class TorcsEnv:
             os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name +' -T -nofuel &')
             time.sleep(0.5)
             os.system('sh autostart.sh')
-            #time.sleep(0.5)
+            time.sleep(0.5)
             #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
             #os.system(config_string)
 
