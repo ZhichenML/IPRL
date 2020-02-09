@@ -35,9 +35,9 @@ class TorcsEnv:
             os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &')
             #os.system('torcs -T -nofuel &')
 
-        time.sleep(0.5)
-        os.system('sh autostart.sh')
-        time.sleep(0.5)
+        #time.sleep(0.5)
+        #os.system('sh autostart.sh')
+        #time.sleep(0.5)
         #os.system(config_string)
 
         """
@@ -238,7 +238,7 @@ class TorcsEnv:
         else:
             os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &')
             time.sleep(0.5)
-            os.system('sh autostart.sh')
+            #os.system('sh autostart.sh')
             time.sleep(0.5)
             #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
             #os.system(config_string)
