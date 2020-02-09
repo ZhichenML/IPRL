@@ -180,9 +180,9 @@ class Client():
                         #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
                         #os.system(config_string)
                         #os.system('torcs -T -nofuel &')
-                        os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name +' -T -nofuel -nodamage -nolaptime &')
+                        os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name +' -nofuel -nodamage -nolaptime &')
                         os.system('sh autostart.sh')
-                        # os.system('torcs -r /usr/local/share/games/torcs/config/raceman/practiceregcg.xml -nofuel -nodamage -nolaptime &')
+                        # os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/practiceregcg.xml -nofuel -nodamage -nolaptime &')
                     else:
                         config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
                         os.system(config_string)
