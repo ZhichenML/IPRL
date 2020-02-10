@@ -186,6 +186,7 @@ class TorcsEnv:
         info['distFromStart'] = observation_next.distFromStart
         info['lastLapTime'] = observation_next.lastLapTime
         info['curLapTime'] = observation_next.curLapTime
+        info['speed'] = sp
 
         if client.R.d['meta'] is True: # Send a reset signal
             self.initial_run = False
