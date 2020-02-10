@@ -193,7 +193,7 @@ class NeuralAgent():
                 a_t_original = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
                 noise_t[0][0] = max(epsilon, 0) * OU.function(a_t_original[0][0], 0.0, 0.60, 0.30)
                 noise_t[0][1] = max(epsilon, 0) * OU.function(a_t_original[0][1], 0.5, 1.00, 0.10)
-                noise_t[0][2] = max(epsilon, 0) * OU.function(a_t_original[0][2], -0.1, 1.00, 0.05)
+                noise_t[0][2] = max(epsilon, 0) * OU.function(a_t_original[0][2], 0.0, 1.00, 0.05)
 
                 a_t[0][0] = a_t_original[0][0] + noise_t[0][0]
                 a_t[0][1] = a_t_original[0][1] + noise_t[0][1]
