@@ -261,25 +261,35 @@ class NeuralAgent():
                 base_q = copy.deepcopy(target_q_values)
 
                 if np.mod(step, 2000) == 0:
-                    logging.info("Episode " + str(i_episode) + " Step " + str(j_iter) + " Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+                    logging.info("Episode " + str(i_episode) + " Step " + str(j_iter) + " Distance: " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
 
                 step += 1
                 if done:
+                    episode_length = j_iter+1
+                    distRaced = ob.distRaced
+                    distFromStart = ob.distFromStart
+                    lastLapTime = ob.lastLapTime
+                    curLapTime = ob.curLapTime
                     break
 
             else:
+                episode_length = j_iter+1
+                distRaced = ob.distRaced
+                distFromStart = ob.distFromStart
+                lastLapTime = ob.lastLapTime
+                curLapTime = ob.curLapTime
                 env.end()
 
             self.lambda_mix = 0 # np.mean(lambda_store)
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + ' ' + str(ob.distFromStart) +
-                         " Last Lap Times: " + str(ob.lastLapTime) + " Cur Lap Times: " + str(ob.curLapTime))
+                         " Episode Length: " + str(episode_length) + "  Distance: " + str(distRaced) + ' ' + str(distFromStart) +
+                         " Last Lap Times: " + str(lastLapTime) + " Cur Lap Times: " + str(curLapTime))
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
             self.save['total_reward'].append(total_reward)
-            self.save['total_step'].append(j_iter+1)
-            self.save['race_dist'].append(ob.distRaced)
-            self.save['lap_time'].append(ob.lastLapTime)
+            self.save['total_step'].append(episode_length)
+            self.save['race_dist'].append(distRaced)
+            self.save['lap_time'].append(lastLapTime)
             #self.save_total_reward.append(total_reward)
             #self.save_total_step.append(j_iter+1)
 
