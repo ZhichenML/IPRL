@@ -195,7 +195,7 @@ class TorcsEnv:
             #logging.info("##### Lap from gym: " + str(obs['lastLapTime']))
             #logging.info("###### Distance from gym: " + str(obs['distRaced']))
             #logging.info("######## Steps: " + str(self.time_step))
-            self.reset()
+            self.reset(relaunch=True)
             client.respond_to_server()
 
         self.time_step += 1
