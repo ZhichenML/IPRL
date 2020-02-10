@@ -262,8 +262,12 @@ class NeuralAgent():
 
                 if np.mod(step, 1) == 0:
                     #logging.info("Episode " + str(i_episode) + " Step " + str(j_iter) + " Distance: " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
+                    distRaced = ob.distRaced
+                    distFromStart = ob.distFromStart
+                    lastLapTime = ob.lastLapTime
+                    curLapTime = ob.curLapTime
                     logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(episode_length) + "  Distance: " + str(distRaced) + ' ' + str(distFromStart) +
+                         " Step " + str(j_iter) + "  Distance: " + str(distRaced) + ' ' + str(distFromStart) +
                          " Last Lap Times: " + str(lastLapTime) + " Cur Lap Times: " + str(curLapTime))
 
                 step += 1
