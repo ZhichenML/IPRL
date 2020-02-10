@@ -65,6 +65,7 @@ class NeuralAgent():
                          distFromStart=[],
                          lastLapTime=[],
                          curLapTime=[],
+                         lapTimes=[],
                          avelapTime=[],
                          ave_sp=[],
                          max_sp=[],
@@ -75,6 +76,7 @@ class NeuralAgent():
                          test_distFromStart=[],
                          test_lastLapTime=[],
                          test_curLapTime=[],
+                         test_lapTimes = [],
                          test_avelapTime=[],
                          test_ave_sp=[],
                          test_max_sp=[]
@@ -127,6 +129,11 @@ class NeuralAgent():
 
             if done: break
 
+        logging.info(" Test Episode Reward: " + str(total_reward) +
+                     " Episode Length: " + str(j_iter+1) + " Ave Reward: " + str(total_reward/(j_iter+1)) +
+                     "\n Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
+                     "\n Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) + " lastLaptime: " + str(lastLapTime) +
+                     "\n ave sp: " + str(np.mean(sp)) + " max sp: " + str(np.max(sp)) )
             #logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
             #            " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
 
@@ -320,9 +327,10 @@ class NeuralAgent():
 
             print('Episode ends!')
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(j_iter+1) + "  Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
-                         " Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) +
-                         " ave sp: " + str(np.mean(sp)) + " max sp: " + str(np.max(sp)) + " lastLaptime: " + str(lastLapTime))
+                         " Episode Length: " + str(j_iter+1) + " Ave Reward: " + str(total_reward/(j_iter+1)) +
+                         "\n Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
+                         "\n Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) + " lastLaptime: " + str(lastLapTime) +
+                         "\n ave sp: " + str(np.mean(sp)) + " max sp: " + str(np.max(sp)) )
 
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
@@ -335,7 +343,11 @@ class NeuralAgent():
 
             self.save['lastLapTime'].append(info['lastLapTime'])
             self.save['curLapTime'].append(info['curLapTime'])
-            self.save['avelapTime'].extend(lastLapTime)
+            self.save['lapTimes'].extend(lastLapTime)
+            if lastLapTime == []:
+                self.save['avelapTime'].append(0)
+            else:
+                self.save['avelapTime'].append(np.mean(lastLapTime))
 
             self.save['ave_sp'].append(np.mean(sp))
             self.save['max_sp'].append(np.max(sp))
@@ -352,7 +364,12 @@ class NeuralAgent():
 
                 self.save['test_lastLapTime'].append(test_info['lastLapTime'])
                 self.save['test_curLapTime'].append(test_info['curLapTime'])
-                self.save['test_avelapTime'].extend(test_lastLapTime)
+                self.save['test_lapTimes'].extend(test_lastLapTime)
+
+                if test_lastLapTime == []:
+                    self.save['test_avelapTime'].append(0)
+                else:
+                    self.save['test_avelapTime'].append(np.mean(test_lastLapTime))
 
                 self.save['test_ave_sp'].append(test_ave_sp)
                 self.save['test_max_sp'].append(test_max_sp)
