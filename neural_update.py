@@ -87,7 +87,9 @@ class NeuralAgent():
             a_t = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
             a_t = a_t[0]
             # print('test a_t:', a_t)
-
+            a_t[0]= clip(a_t[0], -1, 1)
+            a_t[1]= clip(a_t[1], 0, 1)
+            a_t[2]= clip(a_t[2], 0, 1)
             ob, r_t, done, info = env.step(a_t)
             if np.mod(j_iter +1,20) == 0:
                 print('ob: ', ob)
@@ -103,9 +105,9 @@ class NeuralAgent():
             #logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
             #            " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
 
-        #env.end()  # This is for shutting down TORCS
+        env.end()  # This is for shutting down TORCS
 
-        return total_reward, j_iter+1, ob.distRaced, ob.lastLapTime
+        return total_reward, j_iter+1, info['distRaced'], info['lastLapTime']
 
 
     def update_neural(self, controllers, episode_count=200, tree=False):
@@ -262,42 +264,30 @@ class NeuralAgent():
 
                 if np.mod(step, 1) == 0:
                     #logging.info("Episode " + str(i_episode) + " Step " + str(j_iter) + " Distance: " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
-                    distRaced = ob.distRaced
-                    distFromStart = ob.distFromStart
-                    lastLapTime = ob.lastLapTime
-                    curLapTime = ob.curLapTime
                     logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Step " + str(j_iter) + "  Distance: " + str(distRaced) + ' ' + str(distFromStart) +
-                         " Last Lap Times: " + str(lastLapTime) + " Cur Lap Times: " + str(curLapTime))
+                         " Step " + str(j_iter) + "  Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
+                         " Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']))
 
                 step += 1
                 if done:
-                    episode_length = j_iter+1
-                    distRaced = ob.distRaced
-                    distFromStart = ob.distFromStart
-                    lastLapTime = ob.lastLapTime
-                    curLapTime = ob.curLapTime
                     break
 
             else:
-                episode_length = j_iter+1
-                distRaced = ob.distRaced
-                distFromStart = ob.distFromStart
-                lastLapTime = ob.lastLapTime
-                curLapTime = ob.curLapTime
                 env.end()
 
             self.lambda_mix = 0 # np.mean(lambda_store)
+
             print('Episode ends!')
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
-                         " Episode Length: " + str(episode_length) + "  Distance: " + str(distRaced) + ' ' + str(distFromStart) +
-                         " Last Lap Times: " + str(lastLapTime) + " Cur Lap Times: " + str(curLapTime))
+                         " Episode Length: " + str(j_iter+1) + "  Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
+                         " Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']))
+
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
             self.save['total_reward'].append(total_reward)
-            self.save['total_step'].append(episode_length)
-            self.save['race_dist'].append(distRaced)
-            self.save['lap_time'].append(lastLapTime)
+            self.save['total_step'].append(j_iter+1)
+            self.save['race_dist'].append(info['distRaced'])
+            self.save['lap_time'].append(info['lastLapTime'])
             #self.save_total_reward.append(total_reward)
             #self.save_total_step.append(j_iter+1)
 

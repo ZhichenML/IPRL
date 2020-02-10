@@ -132,6 +132,7 @@ class TorcsEnv:
 
         # Make an obsevation from a raw observation vector from TORCS
         self.observation = self.make_observaton(obs)
+        observation_next = self.observation
 
         # Reward setting Here #######################################
         # direction-dependent positive reward
@@ -146,7 +147,7 @@ class TorcsEnv:
 
         # collision detection
         if obs['damage'] - obs_pre['damage'] > 0:
-            reward = -1
+            reward += -1
 
         #
         # Termination judgement #########################
@@ -157,20 +158,20 @@ class TorcsEnv:
         if self.terminal_judge_start < self.time_step:
             if abs(track.any()) > 1 or abs(trackPos) > 2.7:  # Episode is terminated if the car is out of track
                 print('Out of Track', track.any(), trackPos)
-                reward = -200
+                reward += -200
                 episode_terminate = True
                 client.R.d['meta'] = True
 
         if self.terminal_judge_start < self.time_step: # Episode terminates if the progress of agent is small
             if sp < self.termination_limit_progress:
                 print('No progress', progress, sp)
-                reward = -2
+                reward += -2
                 episode_terminate = True
                 client.R.d['meta'] = True
 
         if np.cos(obs['angle']) < -0.5: # Episode is terminated if the agent runs backward
             print('Running Backward')
-            reward = -200
+            reward += -200
             episode_terminate = True
             client.R.d['meta'] = True
 
@@ -179,6 +180,12 @@ class TorcsEnv:
             episode_terminate = True
             client.R.d['meta'] = True
 
+
+        info = {}
+        info['distRaced'] = observation_next.distRaced
+        info['distFromStart'] = observation_next.distFromStart
+        info['lastLapTime'] = observation_next.lastLpTime
+        info['curLapTime'] = observation_next.curLapTime
 
         if client.R.d['meta'] is True: # Send a reset signal
             self.initial_run = False
@@ -192,7 +199,7 @@ class TorcsEnv:
 
         self.time_step += 1
 
-        return self.get_obs(), reward, client.R.d['meta'], {}
+        return observation_next, reward, client.R.d['meta'], info #self.get_obs()
 
     def reset(self, relaunch=False):
         self.time_step = 0
@@ -207,7 +214,7 @@ class TorcsEnv:
                 print("### TORCS is RELAUNCHED ###")
 
         # Modify here if you use multiple tracks in the environment
-        self.client = snakeoil3.Client(p=3101, vision=self.vision) # , track_name=self.track_name  # Open new UDP in vtorcs
+        self.client = snakeoil3.Client(p=3101, vision=self.vision, track_name=self.track_name) #   # Open new UDP in vtorcs
         self.client.MAX_STEPS = np.inf
 
         client = self.client
