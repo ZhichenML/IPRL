@@ -1,4 +1,5 @@
 from gym_torcs import TorcsEnv
+from snakeoil3_gym import clip
 import numpy as np
 import random
 import argparse
@@ -201,7 +202,11 @@ class NeuralAgent():
 
                 mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
 
+                a_t[0][0]= clip(a_t[0][0], -1, 1)
+                a_t[0][1]= clip(a_t[0][1], 0, 1)
+                a_t[0][2]= clip(a_t[0][2], 0, 1)
                 print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t)
+
                 ob, r_t, done, info = env.step(a_t[0]) #(mixed_act)
 
                 s_t1 = np.hstack(
@@ -390,9 +395,9 @@ class NeuralAgent():
                 observation_list.append(newobs[:])
             else:
                 observation_list.append(window_list[:])
-            actions_list.append(mixed_act[:])
+            actions_list.append(a_t[0][:]) #(mixed_act[:])
 
-            ob, r_t, done, info = env.step(mixed_act)
+            ob, r_t, done, info = env.step(a_t[0])
 
             s_t1 = np.hstack(
                 (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
@@ -456,7 +461,7 @@ class NeuralAgent():
             a_t = self.actor.model.predict(s_t.reshape(1, 29))
             mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
 
-            actions_list.append(mixed_act[:])
+            actions_list.append(a_t[0][:]) #(mixed_act[:])
 
         return net_obs_list, observation_list, actions_list
 
