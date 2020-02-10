@@ -184,7 +184,7 @@ class TorcsEnv:
         info = {}
         info['distRaced'] = observation_next.distRaced
         info['distFromStart'] = observation_next.distFromStart
-        info['lastLapTime'] = observation_next.lastLpTime
+        info['lastLapTime'] = observation_next.lastLapTime
         info['curLapTime'] = observation_next.curLapTime
 
         if client.R.d['meta'] is True: # Send a reset signal
