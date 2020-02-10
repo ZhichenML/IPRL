@@ -288,6 +288,7 @@ class NeuralAgent():
                 env.end()
 
             self.lambda_mix = 0 # np.mean(lambda_store)
+            print('Episode ends!')
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
                          " Episode Length: " + str(episode_length) + "  Distance: " + str(distRaced) + ' ' + str(distFromStart) +
                          " Last Lap Times: " + str(lastLapTime) + " Cur Lap Times: " + str(curLapTime))
