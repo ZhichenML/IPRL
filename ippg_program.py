@@ -54,7 +54,7 @@ class ParameterFinder():
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
+        bo_pid.maximize(init_points=5, n_iter=10, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
 
         return bo_pid.max['params']
@@ -139,7 +139,7 @@ def learn_policy(track_name, test_program):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
     # 2. Collect data
     all_observations = []
