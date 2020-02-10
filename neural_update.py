@@ -96,6 +96,8 @@ class NeuralAgent():
 
         sp = []
 
+        lastLapTime = []
+
         for j_iter in range(max_steps):
 
             a_t = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
@@ -107,6 +109,12 @@ class NeuralAgent():
             ob, r_t, done, info = env.step(a_t)
 
             sp.append(info['speed'])
+
+            if lastLapTime == []:
+                if info['lastLapTime']>0:
+                    lastLapTime.append(info['lastLapTime'])
+            elif info['lastLapTime']>0 and lastLapTime[-1] != info['lastLapTime']:
+                lastLapTime.append(info['lastLapTime'])
 
             if np.mod(j_iter +1,20) == 0:
                 print('ob: ', ob)
@@ -127,7 +135,7 @@ class NeuralAgent():
         ave_sp = np.mean(sp)
         max_sp = np.max(sp)
 
-        return total_reward, j_iter+1, info, ave_sp, max_sp
+        return total_reward, j_iter+1, info, ave_sp, max_sp, lastLapTime
 
 
     def update_neural(self, controllers, episode_count=200, tree=False):
@@ -189,6 +197,9 @@ class NeuralAgent():
 
 
             sp = []
+
+            lastLapTime = []
+
             for j_iter in range(max_steps):
                 if tree:
                     tree_obs = [sensor for obs in tempObs[:-1] for sensor in obs]
@@ -232,6 +243,14 @@ class NeuralAgent():
                 ob, r_t, done, info = env.step(a_t[0]) #(mixed_act)
 
                 sp.append(info['speed'])
+
+                if lastLapTime == []:
+                    if info['lastLapTime']>0:
+                        lastLapTime.append(info['lastLapTime'])
+                elif info['lastLapTime']>0 and lastLapTime[-1] != info['lastLapTime']:
+                    lastLapTime.append(info['lastLapTime'])
+
+
 
                 s_t1 = np.hstack(
                     (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
@@ -303,7 +322,7 @@ class NeuralAgent():
             logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
                          " Episode Length: " + str(j_iter+1) + "  Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
                          " Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) +
-                         " ave sp: " + str(np.mean(sp)) + " max sp: " + str(np.max(sp)))
+                         " ave sp: " + str(np.mean(sp)) + " max sp: " + str(np.max(sp)) + " lastLaptime: " + str(lastLapTime))
 
             #logging.info(" Lambda Mix: " + str(self.lambda_mix))
 
@@ -316,14 +335,14 @@ class NeuralAgent():
 
             self.save['lastLapTime'].append(info['lastLapTime'])
             self.save['curLapTime'].append(info['curLapTime'])
-            self.save['avelapTime'].append(info['curLapTime'])
+            self.save['avelapTime'].extend(lastLapTime)
 
             self.save['ave_sp'].append(np.mean(sp))
             self.save['max_sp'].append(np.max(sp))
 
             # test
             if np.mod(i_episode+1, 10) == 0:
-                test_total_reward, test_step, test_info, test_ave_sp, test_max_sp = self.rollout()
+                test_total_reward, test_step, test_info, test_ave_sp, test_max_sp, test_lastLapTime = self.rollout()
                 self.save['test_total_reward'].append(test_total_reward)
                 self.save['test_total_step'].append(test_step)
                 self.save['test_ave_reward'].append(test_total_reward/test_step)
@@ -333,7 +352,7 @@ class NeuralAgent():
 
                 self.save['test_lastLapTime'].append(test_info['lastLapTime'])
                 self.save['test_curLapTime'].append(test_info['curLapTime'])
-                self.save['test_avelapTime'].append(info['curLapTime'])
+                self.save['test_avelapTime'].extend(test_lastLapTime)
 
                 self.save['test_ave_sp'].append(test_ave_sp)
                 self.save['test_max_sp'].append(test_max_sp)
