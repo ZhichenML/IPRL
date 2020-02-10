@@ -205,7 +205,7 @@ class NeuralAgent():
                 a_t[0][0]= clip(a_t[0][0], -1, 1)
                 a_t[0][1]= clip(a_t[0][1], 0, 1)
                 a_t[0][2]= clip(a_t[0][2], 0, 1)
-                print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t)
+                #print('a_t_original: ', str(a_t_original), 'noise: ', str(noise_t), 'a_t: ', a_t)
 
                 ob, r_t, done, info = env.step(a_t[0]) #(mixed_act)
 
