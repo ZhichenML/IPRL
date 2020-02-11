@@ -54,7 +54,7 @@ class ParameterFinder():
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=5, n_iter=10, kappa=5, **gp_params)
+        bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
 
         return bo_pid.max['params']
@@ -139,13 +139,13 @@ def learn_policy(track_name, test_program):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
 
     # 2. Collect data
     all_observations = []
     all_actions = []
-    for i_iter in range(10): # optimize controller parameters
-        logging.info("Iteration {}".format(i_iter))
+    for i_iter in range(50): # optimize controller parameters
+        logging.info("\n Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         #if i_iter == 0:
         #    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
@@ -164,6 +164,7 @@ def learn_policy(track_name, test_program):
         #print('\n all_actions', all_actions[0])
 
     # 3. Learn new programmatic policy
+    logging.info("Learn programmatic policy! \n")
     #print('observations: ', np.array(all_observations)[0])
     #print('actions', np.array(all_actions).shape)
     param_finder = ParameterFinder(all_observations, all_actions, steer_prog, accel_prog, brake_prog)
