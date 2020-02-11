@@ -191,17 +191,18 @@ class TorcsEnv:
         if client.R.d['meta'] is True: # Send a reset signal
             self.initial_run = False
             #client.shutdown()
-            print("Resetting Torcs")
+            #print("Resetting Torcs")
             #logging.info("##### Lap from gym: " + str(obs['lastLapTime']))
             #logging.info("###### Distance from gym: " + str(obs['distRaced']))
             #logging.info("######## Steps: " + str(self.time_step))
-            self.reset(relaunch=True)
+            #self.reset(relaunch=False)
             client.respond_to_server()
 
         self.time_step += 1
 
         return observation_next, reward, client.R.d['meta'], info #self.get_obs()
 
+    # zhichen: relaunch torcs env and rebuild client-server connection
     def reset(self, relaunch=False):
         self.time_step = 0
 
