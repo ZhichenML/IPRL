@@ -389,7 +389,7 @@ class NeuralAgent():
                     json.dump(self.actor.model.to_json(), outfile)
 
                 #os.remove("criticmodel.h5")
-                self.critic.model.save_weights("criticmodel"+str(seed)+".h5", overwrite=True)
+                self.critic.model.save_weights("criticmodel_"+str(seed)+".h5", overwrite=True)
                 with open("criticmodel.json", "w") as outfile:
                     json.dump(self.critic.model.to_json(), outfile)
 
