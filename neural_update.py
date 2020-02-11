@@ -69,6 +69,7 @@ class NeuralAgent():
                          avelapTime=[],
                          ave_sp=[],
                          max_sp=[],
+                         min_sp=[],
                          test_total_reward=[],
                          test_total_step=[],
                          test_ave_reward=[],
@@ -79,7 +80,8 @@ class NeuralAgent():
                          test_lapTimes = [],
                          test_avelapTime=[],
                          test_ave_sp=[],
-                         test_max_sp=[]
+                         test_max_sp=[],
+                         test_min_sp=[]
                          )
 
 
@@ -141,8 +143,9 @@ class NeuralAgent():
 
         ave_sp = np.mean(sp)
         max_sp = np.max(sp)
+        min_sp = np.min(sp)
 
-        return total_reward, j_iter+1, info, ave_sp, max_sp, lastLapTime
+        return total_reward, j_iter+1, info, ave_sp, max_sp, min_sp, lastLapTime
 
 
     def update_neural(self, controllers, episode_count=200, tree=False):
@@ -343,7 +346,7 @@ class NeuralAgent():
 
             self.save['lastLapTime'].append(info['lastLapTime'])
             self.save['curLapTime'].append(info['curLapTime'])
-            self.save['lapTimes'].extend(lastLapTime)
+            self.save['lapTimes'].append(lastLapTime)
             if lastLapTime == []:
                 self.save['avelapTime'].append(0)
             else:
@@ -351,10 +354,11 @@ class NeuralAgent():
 
             self.save['ave_sp'].append(np.mean(sp))
             self.save['max_sp'].append(np.max(sp))
+            self.save['min_sp'].append(np.min(sp))
 
             # test
             if np.mod(i_episode+1, 10) == 0:
-                test_total_reward, test_step, test_info, test_ave_sp, test_max_sp, test_lastLapTime = self.rollout()
+                test_total_reward, test_step, test_info, test_ave_sp, test_max_sp, test_min_sp, test_lastLapTime = self.rollout()
                 self.save['test_total_reward'].append(test_total_reward)
                 self.save['test_total_step'].append(test_step)
                 self.save['test_ave_reward'].append(test_total_reward/test_step)
@@ -364,7 +368,7 @@ class NeuralAgent():
 
                 self.save['test_lastLapTime'].append(test_info['lastLapTime'])
                 self.save['test_curLapTime'].append(test_info['curLapTime'])
-                self.save['test_lapTimes'].extend(test_lastLapTime)
+                self.save['test_lapTimes'].append(test_lastLapTime)
 
                 if test_lastLapTime == []:
                     self.save['test_avelapTime'].append(0)
@@ -373,6 +377,7 @@ class NeuralAgent():
 
                 self.save['test_ave_sp'].append(test_ave_sp)
                 self.save['test_max_sp'].append(test_max_sp)
+                self.save['test_mmin_sp'].append(test_min_sp)
 
 
 
