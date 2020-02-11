@@ -17,7 +17,7 @@ class TorcsEnv:
 
     initial_reset = True
 
-    def __init__(self, vision=False, throttle=False, gear_change=False, track_name='practiceregcg.xml'):
+    def __init__(self, vision=False, throttle=False, gear_change=False, track_name='practice.xml'):
         self.track_name = track_name
         self.vision = vision
         self.throttle = throttle
@@ -27,6 +27,7 @@ class TorcsEnv:
 
         os.system('pkill torcs')
         time.sleep(0.5)
+        logging.info('Init TORCS Environment')
         if self.vision is True:
             config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
             os.system(config_string)
@@ -77,7 +78,7 @@ class TorcsEnv:
         action_torcs = client.R.d
 
         # Steering
-        action_torcs['steer'] = this_action['steer']  # in [-1, 1]
+        client.R.d['steer'] = client.R.d['steer']  # in [-1, 1]
 
         #  Simple Autnmatic Throttle Control by Snakeoil
         if self.throttle is False:
@@ -96,35 +97,35 @@ class TorcsEnv:
             # Traction Control System
             if ((client.S.d['wheelSpinVel'][2]+client.S.d['wheelSpinVel'][3]) -
                (client.S.d['wheelSpinVel'][0]+client.S.d['wheelSpinVel'][1]) > 5):
-                action_torcs['accel'] -= .2
+                client.R.d['accel'] -= .2
         else:
-            action_torcs['accel'] = this_action['accel']
-            action_torcs['brake'] = this_action['brake']
+            client.R.d['accel'] = this_action['accel']
+            client.R.d['brake'] = this_action['brake']
 
         #  Automatic Gear Change by Snakeoil
         if self.gear_change is True:
-            action_torcs['gear'] = this_action['gear']
+            client.R.d['gear'] = this_action['gear']
         else:
             #  Automatic Gear Change by Snakeoil is possible
-            action_torcs['gear'] = 1
+            client.R.d['gear'] = 1
             if self.throttle:
                 if client.S.d['speedX'] > 50:
-                    action_torcs['gear'] = 2
+                    client.R.d['gear'] = 2
                 if client.S.d['speedX'] > 80:
-                    action_torcs['gear'] = 3
+                    client.R.d['gear'] = 3
                 if client.S.d['speedX'] > 110:
-                    action_torcs['gear'] = 4
+                    client.R.d['gear'] = 4
                 if client.S.d['speedX'] > 140:
-                    action_torcs['gear'] = 5
+                    client.R.d['gear'] = 5
                 if client.S.d['speedX'] > 170:
-                    action_torcs['gear'] = 6
+                    client.R.d['gear'] = 6
         # Save the privious full-obs from torcs for the reward calculation
         obs_pre = copy.deepcopy(client.S.d)
 
         # One-Step Dynamics Update #################################
-        # Apply the Agent's action into torcs
+        # Apply the Agent's action into torcs,  zhichen: send R.d
         client.respond_to_server()
-        # Get the response of TORCS
+        # Get the response of TORCS,  zhichen: set S.d
         client.get_servers_input()
 
         # Get the current full-observation from torcs
@@ -190,13 +191,7 @@ class TorcsEnv:
 
         if client.R.d['meta'] is True: # Send a reset signal
             self.initial_run = False
-            #client.shutdown()
-            #print("Resetting Torcs")
-            #logging.info("##### Lap from gym: " + str(obs['lastLapTime']))
-            #logging.info("###### Distance from gym: " + str(obs['distRaced']))
-            #logging.info("######## Steps: " + str(self.time_step))
-            #self.reset(relaunch=False)
-            client.respond_to_server()
+            client.respond_to_server() # zhichen: send meta signal
 
         self.time_step += 1
 
@@ -213,9 +208,11 @@ class TorcsEnv:
             ## TENTATIVE. Restarting TORCS every episode suffers the memory leak bug!
             if relaunch is True:
                 self.reset_torcs()
-                print("### TORCS is RELAUNCHED ###")
+                logging.info("### TORCS is RELAUNCHED ###")
 
         # Modify here if you use multiple tracks in the environment
+
+        self.client.shutdown()
         self.client = snakeoil3.Client(p=3101, vision=self.vision, track_name=self.track_name) #   # Open new UDP in vtorcs
         self.client.MAX_STEPS = np.inf
 

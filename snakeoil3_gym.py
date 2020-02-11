@@ -117,7 +117,7 @@ def bargraph(x,mn,mx,w,c='X'):
     return '[%s]' % (nnc+npc+ppc+pnc)
 
 class Client():
-    def __init__(self, H=None, p=None, i=None, e=None, t=None, s=None, d=None, vision=False, track_name='practiceregcg.xml'):
+    def __init__(self, H=None, p=None, i=None, e=None, t=None, s=None, d=None, vision=False, track_name='practice.xml'):
         # If you don't like the option defaults,  change them here.
         self.track_name = track_name
         self.vision = vision
@@ -147,7 +147,7 @@ class Client():
         try:
             self.so= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error as emsg:
-            print('Error: Could not create socket...')
+            logging.info('Error: Could not create socket...')
             sys.exit(-1)
         # == Initialize Connection To Server ==
         self.so.settimeout(1)
@@ -169,33 +169,27 @@ class Client():
                 sockdata,addr= self.so.recvfrom(data_size)
                 sockdata = sockdata.decode('utf-8')
             except socket.error as emsg:
-                print("Waiting for server on %d............" % self.port)
-                print("Count Down : " + str(n_fail))
+                logging.info("Waiting for server on %d............" % self.port)
+                logging.info("Count Down : " + str(n_fail))
                 if n_fail < 0:
-                    print("relaunch torcs")
+                    logging.info("relaunch torcs")
                     os.system('pkill torcs')
                     time.sleep(1.0)
                     if self.vision is False:
-                        #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &'
-                        #config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel &'
-                        #os.system(config_string)
-                        #os.system('torcs -T -nofuel &')
                         os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -T -nofuel -nodamage -nolaptime &')
-                        time.sleep(0.5)
-                        os.system('sh autostart.sh')
-                        time.sleep(0.5)
-                        # os.system('torcs -s -r /usr/local/share/games/torcs/config/raceman/practiceregcg.xml -nofuel -nodamage -nolaptime &')
                     else:
                         config_string = 'torcs -s -r /usr/local/share/games/torcs/config/raceman/' + self.track_name + ' -nofuel -nodamage -nolaptime -vision &'
                         os.system(config_string)
-                    #time.sleep(1.0)
-                    #os.system('sh autostart.sh')
-                    n_fail = 1
+                    time.sleep(1.0)
+                    os.system('sh autostart.sh')
+                    time.sleep(1.0)
+
+                    n_fail = 2
                 n_fail -= 1
 
             identify = '***identified***'
             if identify in sockdata:
-                print("Client connected on %d.............." % self.port)
+                logging.info("Client connected on %d.............." % self.port)
                 break
 
     def parse_the_command_line(self):
@@ -250,31 +244,32 @@ class Client():
                 sockdata,addr= self.so.recvfrom(data_size)
                 sockdata = sockdata.decode('utf-8')
             except socket.error as emsg:
-                print('.e', end=' ')
+                logging.info('.e', end=' ')
                 return # ???????????
                 #print "Waiting for data on %d.............." % self.port
             if '***identified***' in sockdata:
-                print("Client connected on %d.............." % self.port)
+                logging.info("Client connected on %d.............." % self.port)
                 continue
             elif '***shutdown***' in sockdata:
-                print((("Server has stopped the race on %d. "+
+                logging.info((("Server has stopped the race on %d. "+
                         "You were in %d place.") %
                         (self.port,self.S.d['racePos'])))
                 self.shutdown()
                 return
             elif '***restart***' in sockdata:
                 # What do I do here?
-                print("Server has restarted the race on %d." % self.port)
+                logging.info("Server has restarted the race on %d." % self.port)
                 # I haven't actually caught the server doing this.
                 self.shutdown()
                 return
             elif not sockdata: # Empty?
+                logging.info('Empty sockdata')
                 continue       # Try again.
             else:
                 self.S.parse_server_str(sockdata)
                 if self.debug:
                     sys.stderr.write("\x1b[2J\x1b[H") # Clear for steady output.
-                    print(self.S)
+                    logging.info(self.S)
                 break # Can now return from this function.
 
     def respond_to_server(self):
@@ -283,16 +278,17 @@ class Client():
             message = repr(self.R)
             self.so.sendto(message.encode(), (self.host, self.port))
         except socket.error as emsg:
-            print("Error sending to server: %s Message %s" % (emsg[1],str(emsg[0])))
+            logging.info("Error sending to server: %s Message %s" % (emsg[1],str(emsg[0])))
             sys.exit(-1)
         if self.debug: print(self.R.fancyout())
         # Or use this for plain output:
         #if self.debug: print self.R
 
+    # zhichen: close UCP connection
     def shutdown(self):
         if not self.so: return
         #logging.info("######### Lap from Snake: " + str(self.S.d['lastLapTime']) + " Dist from Snake: " + str(self.S.d['distRaced']))
-        print(("Race terminated or %d steps elapsed. Shutting down %d."
+        logging.info(("Race terminated or %d steps elapsed. Shutting down %d."
                % (self.maxSteps,self.port)))
         self.so.close()
         self.R.d['meta'] = 1

@@ -29,7 +29,7 @@ class FunctionOU(object):
 
 
 class NeuralAgent():
-    def __init__(self, track_name='practgt2.xml'):
+    def __init__(self, track_name='practice.xml'):
         BUFFER_SIZE = 100000
         TAU = 0.001  # Target Network HyperParameters
         LRA = 0.0001  # Learning rate for Actor
@@ -51,12 +51,6 @@ class NeuralAgent():
         self.critic = CriticNetwork(sess, state_dim, self.action_dim, self.batch_size, TAU, LRC)
         self.buff = ReplayBuffer(BUFFER_SIZE)  # Create replay buffer
         self.track_name = track_name
-
-
-        self.save_total_reward = []
-        self.save_total_step = []
-        self.save_test_total_reward = []
-        self.save_test_total_step = []
 
         self.save = dict(total_reward=[],
                          total_step=[],
@@ -85,12 +79,13 @@ class NeuralAgent():
                          )
 
 
-    def rollout(self):
+    def rollout(self, env):
         max_steps = 10000
 
         vision = False
 
-        env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
+        # zhichen: it is not stable to have two torcs env and UDP connections
+        # env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
 
         ob = env.reset(relaunch=True)
         s_t = np.hstack(
@@ -110,6 +105,7 @@ class NeuralAgent():
             a_t[0]= clip(a_t[0], -1, 1)
             a_t[1]= clip(a_t[1], 0, 1)
             a_t[2]= clip(a_t[2], 0, 1)
+
             ob, r_t, done, info = env.step(a_t)
 
             sp.append(info['speed'])
@@ -121,7 +117,8 @@ class NeuralAgent():
                 lastLapTime.append(info['lastLapTime'])
 
             if np.mod(j_iter +1,20) == 0:
-                print('ob: ', ob)
+                logging.info('step: ', str(j_iter+1))
+                print('\n ob: ', ob)
 
             s_t = np.hstack(
                 (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
@@ -131,7 +128,7 @@ class NeuralAgent():
 
             if done: break
 
-        logging.info(" Test Episode Reward: " + str(total_reward) +
+        logging.info("Test Episode Reward: " + str(total_reward) +
                      " Episode Length: " + str(j_iter+1) + " Ave Reward: " + str(total_reward/(j_iter+1)) +
                      "\n Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
                      "\n Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) + " lastLaptime: " + str(lastLapTime) +
@@ -139,7 +136,7 @@ class NeuralAgent():
             #logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
             #            " Episode Length: " + str(j_iter+1) + "  Distance" + str(ob.distRaced) + " Lap Times: " + str(ob.lastLapTime))
 
-        env.end()  # This is for shutting down TORCS
+        #env.end()  # This is for shutting down TORCS
 
         ave_sp = np.mean(sp)
         max_sp = np.max(sp)
@@ -148,7 +145,7 @@ class NeuralAgent():
         return total_reward, j_iter+1, info, ave_sp, max_sp, min_sp, lastLapTime
 
 
-    def update_neural(self, controllers, episode_count=200, tree=False, seed=1337):
+    def update_neural(self, controllers, episode_count=500, tree=False, seed=1337):
         OU = FunctionOU()
         vision = False
         GAMMA = 0.99
@@ -188,10 +185,13 @@ class NeuralAgent():
 
         for i_episode in range(episode_count):
 
-            logging.info("\n New Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
-            if np.mod(i_episode, 3) == 0:
+            print('\n')
+            logging.info("New Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
+            if np.mod(i_episode+1, 3) == 0:
+                logging.info('relaunch TORCS')
                 ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
             else:
+                logging.info('reset TORCS')
                 ob = env.reset()
             #print('ob: ', ob)
 
@@ -323,13 +323,13 @@ class NeuralAgent():
                 if done:
                     break
 
-            else:
-                env.end()
+
 
             self.lambda_mix = 0 # np.mean(lambda_store)
 
-            print('Episode ends!')
-            logging.info(" Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
+
+            logging.info('Episode ends! \n' +
+                         "Total Steps: " + str(step) + " " + str(i_episode) + "-th Episode Reward: " + str(total_reward) +
                          " Episode Length: " + str(j_iter+1) + " Ave Reward: " + str(total_reward/(j_iter+1)) +
                          "\n Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
                          "\n Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) + " lastLaptime: " + str(lastLapTime) +
@@ -359,7 +359,7 @@ class NeuralAgent():
             # test
             if np.mod(i_episode+1, 10) == 0:
                 logging.info("Start Testing!")
-                test_total_reward, test_step, test_info, test_ave_sp, test_max_sp, test_min_sp, test_lastLapTime = self.rollout()
+                test_total_reward, test_step, test_info, test_ave_sp, test_max_sp, test_min_sp, test_lastLapTime = self.rollout(env)
                 self.save['test_total_reward'].append(test_total_reward)
                 self.save['test_total_step'].append(test_step)
                 self.save['test_ave_reward'].append(test_total_reward/test_step)
@@ -420,7 +420,7 @@ class NeuralAgent():
         logging.info("Neural Policy Update Finish.")
         return None
 
-    def collect_data(self, controllers, tree=False):
+    def collect_data(self, controllers, tree=False, relaunch=True):
         OU = FunctionOU()
         vision = False
         GAMMA = 0.99
@@ -444,7 +444,7 @@ class NeuralAgent():
         factor = 0.8
 
         logging.info("TORCS Data Collection started with Lambda = " + str(self.lambda_mix))
-        ob = env.reset(relaunch=True)
+        ob = env.reset(relaunch=relaunch)
 
         s_t = np.hstack(
             (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))

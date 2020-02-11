@@ -60,7 +60,7 @@ class ParameterFinder():
         return bo_pid.max['params']
 
 
-def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
+def programmatic_game(steer, accel, brake, track_name='practice.xml'):
     episode_count = 1
     max_steps = 10000
     window = 5
@@ -154,7 +154,11 @@ def learn_policy(track_name, test_program, seed):
 
         # Collect Trajectories
 
-        observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
+        if np.mod(i_iter+1, 3) == 0:
+            relaunch=True  # relaunch TORCS every 3 episode because of the memory leak error
+        else:
+            relaunch=False
+        observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog], relaunch=relaunch)
         #print('observation_list', observation_list[0])
         #print('\n action_list', action_list[0])
 
