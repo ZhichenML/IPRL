@@ -118,7 +118,7 @@ def programmatic_game(steer, accel, brake, track_name='practgt2.xml'):
 
 
 
-def learn_policy(track_name, test_program):
+def learn_policy(track_name, test_program, seed):
 
     # Define Pi_0
     # def __init__(self, pid_constants=(0, 0, 0), pid_target=0.0, pid_sensor=0, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.0, condition='False')
@@ -139,7 +139,7 @@ def learn_policy(track_name, test_program):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000, tree=False, seed=seed)
 
     # 2. Collect data
     all_observations = []
@@ -226,4 +226,4 @@ if __name__ == "__main__":
             logging.StreamHandler(sys.stdout)
         ])
     logging.info("Logging started with level: INFO")
-    learn_policy(track_name=args.trackfile, test_program=args.test_program)
+    learn_policy(track_name=args.trackfile, test_program=args.test_program, seed = args.seed)

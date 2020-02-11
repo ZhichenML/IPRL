@@ -148,7 +148,7 @@ class NeuralAgent():
         return total_reward, j_iter+1, info, ave_sp, max_sp, min_sp, lastLapTime
 
 
-    def update_neural(self, controllers, episode_count=200, tree=False):
+    def update_neural(self, controllers, episode_count=200, tree=False, seed=1337):
         OU = FunctionOU()
         vision = False
         GAMMA = 0.99
@@ -384,18 +384,18 @@ class NeuralAgent():
             if np.mod(i_episode+1, 5) == 0:
                 print("Now we save model")
                 #os.remove("actormodel.h5")
-                self.actor.model.save_weights("actormodel.h5", overwrite=True)
+                self.actor.model.save_weights("actormodel_"+str(seed)+".h5", overwrite=True)
                 with open("actormodel.json", "w") as outfile:
                     json.dump(self.actor.model.to_json(), outfile)
 
                 #os.remove("criticmodel.h5")
-                self.critic.model.save_weights("criticmodel.h5", overwrite=True)
+                self.critic.model.save_weights("criticmodel"+str(seed)+".h5", overwrite=True)
                 with open("criticmodel.json", "w") as outfile:
                     json.dump(self.critic.model.to_json(), outfile)
 
 
             if np.mod(i_episode+1, 10) == 0:
-                filename = "./Fig/iprl_save"
+                filename = "./Fig/iprl_save_" + str(seed)
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
