@@ -377,7 +377,7 @@ class NeuralAgent():
 
                 self.save['test_ave_sp'].append(test_ave_sp)
                 self.save['test_max_sp'].append(test_max_sp)
-                self.save['test_mmin_sp'].append(test_min_sp)
+                self.save['test_min_sp'].append(test_min_sp)
 
 
 
