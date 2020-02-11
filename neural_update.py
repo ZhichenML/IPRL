@@ -358,6 +358,7 @@ class NeuralAgent():
 
             # test
             if np.mod(i_episode+1, 10) == 0:
+                logging.info("Start Testing!")
                 test_total_reward, test_step, test_info, test_ave_sp, test_max_sp, test_min_sp, test_lastLapTime = self.rollout()
                 self.save['test_total_reward'].append(test_total_reward)
                 self.save['test_total_step'].append(test_step)

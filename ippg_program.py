@@ -139,7 +139,7 @@ def learn_policy(track_name, test_program, seed):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000, tree=False, seed=seed)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=500, tree=False, seed=seed)
 
     # 2. Collect data
     all_observations = []
@@ -217,7 +217,7 @@ if __name__ == "__main__":
     random.seed(args.seed)
     logPath = 'logs'
     now = time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime(time.time()))
-    logFileName = args.logname + args.trackfile[:-4] + now
+    logFileName = args.logname + args.trackfile[:-4] + str(args.seed) + now
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(threadName)-12.12s] %(module)s  %(funcName)s %(lineno)d [%(levelname)-5.5s]  %(message)s",

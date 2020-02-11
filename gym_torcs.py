@@ -296,7 +296,7 @@ class TorcsEnv:
                                lastLapTime=np.array(raw_obs['lastLapTime'], dtype=np.float32)/1.0,
                                curLapTime=np.array(raw_obs['curLapTime'], dtype=np.float32)/1.0,
                                distRaced=np.array(raw_obs['distRaced'], dtype=np.float32)/1.0,
-                               distFromStart=np.array(raw_obs['distFromStart'], np.float32))
+                               distFromStart=np.array(raw_obs['distFromStart'], dtype=np.float32)/1.0)
         else:
             names = ['focus',
                      'speedX', 'speedY', 'speedZ', 'angle',
