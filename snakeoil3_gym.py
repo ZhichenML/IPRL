@@ -244,7 +244,7 @@ class Client():
                 sockdata,addr= self.so.recvfrom(data_size)
                 sockdata = sockdata.decode('utf-8')
             except socket.error as emsg:
-                logging.info('.e', end=' ')
+                logging.info('.e')
                 return # ???????????
                 #print "Waiting for data on %d.............." % self.port
             if '***identified***' in sockdata:
