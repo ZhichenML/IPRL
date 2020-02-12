@@ -117,7 +117,7 @@ class NeuralAgent():
                 lastLapTime.append(info['lastLapTime'])
 
             if np.mod(j_iter +1,20) == 0:
-                logging.info('step: ', str(j_iter+1))
+                logging.info('step: ' + str(j_iter+1))
                 print('\n ob: ', ob)
 
             s_t = np.hstack(
@@ -187,7 +187,7 @@ class NeuralAgent():
 
             print('\n')
             logging.info("New Episode : " + str(i_episode) + " Replay Buffer " + str(self.buff.count()))
-            if np.mod(i_episode+1, 3) == 0:
+            if np.mod(i_episode, 3) == 0:
                 logging.info('relaunch TORCS')
                 ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
             else:

@@ -154,7 +154,7 @@ def learn_policy(track_name, test_program, seed):
 
         # Collect Trajectories
 
-        if np.mod(i_iter+1, 3) == 0:
+        if np.mod(i_iter, 3) == 0:
             relaunch=True  # relaunch TORCS every 3 episode because of the memory leak error
         else:
             relaunch=False

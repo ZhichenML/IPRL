@@ -78,7 +78,7 @@ class TorcsEnv:
         action_torcs = client.R.d
 
         # Steering
-        client.R.d['steer'] = client.R.d['steer']  # in [-1, 1]
+        client.R.d['steer'] = this_action['steer']  # in [-1, 1]
 
         #  Simple Autnmatic Throttle Control by Snakeoil
         if self.throttle is False:
