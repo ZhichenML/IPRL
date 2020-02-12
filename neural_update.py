@@ -420,7 +420,7 @@ class NeuralAgent():
         logging.info("Neural Policy Update Finish.")
         return None
 
-    def collect_data(self, controllers, tree=False, relaunch=True):
+    def collect_data(self, controllers, tree=False):
         OU = FunctionOU()
         vision = False
         GAMMA = 0.99
@@ -437,6 +437,7 @@ class NeuralAgent():
 
         # Generate a Torcs environment
         env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
+        ob = env.reset(relaunch=True)
 
         window = 5
         lambda_store = np.zeros((max_steps, 1))
@@ -444,10 +445,11 @@ class NeuralAgent():
         factor = 0.8
 
         logging.info("TORCS Data Collection started with Lambda = " + str(self.lambda_mix))
-        ob = env.reset(relaunch=relaunch)
 
         s_t = np.hstack(
             (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
+
+        a_t_prior = np.zeros([1, self.action_dim])
 
         total_reward = 0.
         tempObs = [[ob.speedX], [ob.angle], [ob.trackPos], [ob.speedY], [ob.speedZ], [ob.rpm],
@@ -475,13 +477,14 @@ class NeuralAgent():
             action_prior = [steer_action, accel_action, brake_action]
 
             tempObs = [[ob.speedX], [ob.angle], [ob.trackPos], [ob.speedY], [ob.speedZ], [ob.rpm],
-                       list(ob.wheelSpinVel / 100.0), list(ob.track), action_prior]
+                       list(ob.wheelSpinVel / 100.0), list(ob.track), a_t_prior[0]] #action_prior]
             window_list.pop(0)
             window_list.append(tempObs[:])
 
             loss = 0
             epsilon -= 1.0 / EXPLORE
             a_t = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
+
             mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
             if tree:
                 newobs = [item for sublist in tempObs[:-1] for item in sublist]
@@ -503,27 +506,9 @@ class NeuralAgent():
             s_t1 = np.hstack(
                 (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
 
-            self.buff.add(s_t, a_t[0], r_t, s_t1, done)  # Add replay buffer
-
-            # Do the batch update
-            batch = self.buff.getBatch(self.batch_size)
-            states = np.asarray([e[0] for e in batch])
-            actions = np.asarray([e[1] for e in batch])
-            rewards = np.asarray([e[2] for e in batch])
-            new_states = np.asarray([e[3] for e in batch])
-            dones = np.asarray([e[4] for e in batch])
-            y_t = np.asarray([e[1] for e in batch])
-
-            target_q_values = self.critic.target_model.predict([new_states, self.actor.target_model.predict(new_states)])
-
-            for k in range(len(batch)):
-                if dones[k]:
-                    y_t[k] = rewards[k]
-                else:
-                    y_t[k] = rewards[k] + GAMMA * target_q_values[k]
-
             total_reward += r_t
             s_t = s_t1
+            a_t_prior = a_t
             #if np.mod(step, 2000) == 0:
             #logging.info(" Distance " + str(ob.distRaced) + " Lap Times " + str(ob.lastLapTime))
             step += 1
