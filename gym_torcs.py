@@ -213,7 +213,7 @@ class TorcsEnv:
 
         # Modify here if you use multiple tracks in the environment
 
-        self.client.shutdown()
+        # self.client.shutdown()
         self.client = snakeoil3.Client(p=3101, vision=self.vision, track_name=self.track_name) #   # Open new UDP in vtorcs
         self.client.MAX_STEPS = np.inf
 
