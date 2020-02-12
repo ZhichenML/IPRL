@@ -169,7 +169,7 @@ def learn_policy(track_name, test_program, seed):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=20, tree=False, seed=seed)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2, tree=False, seed=seed)
 
     # 2. Collect data
     all_observations = []
@@ -177,7 +177,7 @@ def learn_policy(track_name, test_program, seed):
 
     relabel_count = 2
     for relabel_ind in range(relabel_count):
-        for i_iter in range(10): # optimize controller parameters
+        for i_iter in range(2): # optimize controller parameters
             logging.info("\n Iteration {}".format(i_iter))
             # Learn/Update Neural Policy
             #if i_iter == 0:
@@ -230,7 +230,7 @@ def learn_policy(track_name, test_program, seed):
         accel_prog.update_parameters([new_paras[i] for i in ['ap0', 'ap1', 'ap2']], new_paras['apt'], new_paras['api'], new_paras['apc'])
         brake_prog.update_parameters([new_paras[i] for i in ['bp0', 'bp1', 'bp2']], new_paras['bpt'])
 
-        for i_iter in range(10):
+        for i_iter in range(2):
             logging.info("\n Program Iteration {}".format(i_iter))
             program_observations, program_actions = programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
 
