@@ -193,7 +193,7 @@ class NeuralAgent():
             else:
                 logging.info('reset TORCS')
                 ob = env.reset()
-            print('ob: ', ob)
+            #print('ob: ', ob)
 
             #[ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, list(ob.wheelSpinVel / 100.0), list(ob.track)]
             s_t = np.hstack(
