@@ -193,7 +193,7 @@ class NeuralAgent():
             else:
                 logging.info('reset TORCS')
                 ob = env.reset()
-            #print('ob: ', ob)
+            print('ob: ', ob)
 
             #[ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, list(ob.wheelSpinVel / 100.0), list(ob.track)]
             s_t = np.hstack(
@@ -436,6 +436,7 @@ class NeuralAgent():
         # Generate a Torcs environment
         env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
         ob = env.reset(relaunch=True)
+
 
         window = 5
         lambda_store = np.zeros((max_steps, 1))
