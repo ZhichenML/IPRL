@@ -421,15 +421,13 @@ class NeuralAgent():
         return None
 
     def collect_data(self, controllers, tree=False):
-        OU = FunctionOU()
+
         vision = False
-        GAMMA = 0.99
-        EXPLORE = 100000.
+
+
         max_steps = 10000
-        reward = 0
-        done = False
+
         step = 0
-        epsilon = 1
 
         if not tree:
             steer_prog, accel_prog, brake_prog = controllers
@@ -481,8 +479,6 @@ class NeuralAgent():
             window_list.pop(0)
             window_list.append(tempObs[:])
 
-            loss = 0
-            epsilon -= 1.0 / EXPLORE
             a_t = self.actor.model.predict(s_t.reshape(1, s_t.shape[0]))
 
             mixed_act = [a_t[0][k_iter] / (1 + self.lambda_mix) + (self.lambda_mix / (1 + self.lambda_mix)) * action_prior[k_iter] for k_iter in range(3)]
