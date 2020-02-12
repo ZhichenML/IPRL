@@ -117,7 +117,10 @@ def programmatic_game(steer, accel, brake, track_name='practice.xml'):
         logging.info("Finish.")
 
 def test_policy(track_name, seed):
-    env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
+
+    vision = False
+
+    env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=track_name)
     nn_agent = NeuralAgent(track_name=track_name)
     #Now load the weight
     logging.info("Now we load the weight")
