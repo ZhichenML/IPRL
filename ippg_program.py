@@ -47,14 +47,14 @@ class ParameterFinder():
 
     def pid_parameters(self, info_list):
 
-        gp_params = {"alpha": 1e-5, "n_restarts_optimizer": 10}  # Optimizer configuration
+        gp_params = {"alpha": 1e-4, "n_restarts_optimizer": 1}  # Optimizer configuration
         logging.info('Optimizing Controller')
         bo_pid = BayesianOptimization(self.find_distance_paras,
                                         {'sp0': info_list[0][0], 'sp1': info_list[0][1], 'sp2': info_list[0][2], 'spt': info_list[0][3],
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
+        bo_pid.maximize(init_points=5, n_iter=10, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
 
         return bo_pid.max['params']
@@ -69,6 +69,10 @@ def programmatic_game(steer, accel, brake, track_name='practice.xml'):
     env = TorcsEnv(vision=False, throttle=True, gear_change=False, track_name=track_name)
 
     logging.info("TORCS Experiment Start with Priors on " + track_name)
+
+    observation_list = []
+    actions_list = []
+
     for i_episode in range(episode_count):
         ob = env.reset(relaunch=True)  # relaunch TORCS every 3 episode because of the memory leak error
         tempObs = [[ob.speedX], [ob.angle], [ob.trackPos], [ob.speedY], [ob.speedZ], [ob.rpm],
@@ -79,11 +83,18 @@ def programmatic_game(steer, accel, brake, track_name='practice.xml'):
         sp = []
         lastLapTime = []
 
+
+
         for j in range(max_steps):
             steer_action = clip_to_range(steer.pid_execute(window_list), -1, 1)
             accel_action = clip_to_range(accel.pid_execute(window_list), 0, 1)
             brake_action = clip_to_range(brake.pid_execute(window_list), 0, 1)
             action_prior = [steer_action, accel_action, brake_action]
+
+
+            observation_list.append(window_list[:])
+            actions_list.append(action_prior) #(mixed_act[:])
+
 
             tempObs = [[ob.speedX], [ob.angle], [ob.trackPos], [ob.speedY], [ob.speedZ], [ob.rpm],
                        list(ob.wheelSpinVel / 100.0), list(ob.track), action_prior]
@@ -115,6 +126,8 @@ def programmatic_game(steer, accel, brake, track_name='practice.xml'):
 
         env.end()  # This is for shutting down TORCS
         logging.info("Finish.")
+
+    return observation_list, actions_list
 
 def test_policy(track_name, seed):
 
@@ -156,70 +169,85 @@ def learn_policy(track_name, test_program, seed):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=50, tree=False, seed=seed)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=20, tree=False, seed=seed)
 
     # 2. Collect data
     all_observations = []
     all_actions = []
-    for i_iter in range(100): # optimize controller parameters
-        logging.info("\n Iteration {}".format(i_iter))
-        # Learn/Update Neural Policy
-        #if i_iter == 0:
-        #    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
-        #else:
-        #    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
-        # Collect Trajectories
+    relabel_count = 2
+    for relabel_ind in range(relabel_count):
+        for i_iter in range(10): # optimize controller parameters
+            logging.info("\n Iteration {}".format(i_iter))
+            # Learn/Update Neural Policy
+            #if i_iter == 0:
+            #    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
+            #else:
+            #    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=100)
 
-        #if np.mod(i_iter, 3) == 0:
-        #    relaunch=True  # relaunch TORCS every 3 episode because of the memory leak error
-        #else:
-        #    relaunch=False
-        observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
-        #print('observation_list', observation_list[0])
-        #print('\n action_list', action_list[0])
+            # Collect Trajectories
 
-        all_observations += observation_list
-        all_actions += action_list
-        # Relabel Observations
-        #_, _, all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
-        #print('\n all_actions', all_actions[0])
+            #if np.mod(i_iter, 3) == 0:
+            #    relaunch=True  # relaunch TORCS every 3 episode because of the memory leak error
+            #else:
+            #    relaunch=False
+            observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
+            #print('observation_list', observation_list[0])
+            #print('\n action_list', action_list[0])
 
-    # 3. Learn new programmatic policy
-    logging.info("Learn programmatic policy! \n")
-    #print('observations: ', np.array(all_observations)[0])
-    #print('actions', np.array(all_actions).shape)
-    param_finder = ParameterFinder(all_observations, all_actions, steer_prog, accel_prog, brake_prog)
-    #print('observations: ', np.array(all_observations).shape())
-    #print('actions', np.array(all_actions).shape())
+            all_observations += observation_list
+            all_actions += action_list
+            # Relabel Observations
+            #_, _, all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
+            #print('\n all_actions', all_actions[0])
 
-    #steer_ranges = [[create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(steer_prog.pid_info()[1], 0.01)]
-    #accel_ranges = [[create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(accel_prog.pid_info()[1], 0.5), create_interval(accel_prog.pid_info()[2], 0.1), create_interval(accel_prog.pid_info()[3], 0.01)]
-    #brake_ranges = [[create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(brake_prog.pid_info()[1], 0.001)]
-    steer_ranges = [create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)]
-    steer_ranges.append(create_interval(steer_prog.pid_info()[1], 0.01))
+        # 3. Learn new programmatic policy
+        logging.info("Learn programmatic policy! \n")
+        #print('observations: ', np.array(all_observations)[0])
+        #print('actions', np.array(all_actions).shape)
+        param_finder = ParameterFinder(all_observations, all_actions, steer_prog, accel_prog, brake_prog)
+        #print('observations: ', np.array(all_observations).shape())
+        #print('actions', np.array(all_actions).shape())
 
-    accel_ranges = [create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)]
-    accel_ranges.append(create_interval(accel_prog.pid_info()[1], 0.5))
-    accel_ranges.append(create_interval(accel_prog.pid_info()[2], 0.1))
-    accel_ranges.append(create_interval(accel_prog.pid_info()[3], 0.01))
+        #steer_ranges = [[create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(steer_prog.pid_info()[1], 0.01)]
+        #accel_ranges = [[create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(accel_prog.pid_info()[1], 0.5), create_interval(accel_prog.pid_info()[2], 0.1), create_interval(accel_prog.pid_info()[3], 0.01)]
+        #brake_ranges = [[create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)], create_interval(brake_prog.pid_info()[1], 0.001)]
+        steer_ranges = [create_interval(steer_prog.pid_info()[0][const], 0.05) for const in range(3)]
+        steer_ranges.append(create_interval(steer_prog.pid_info()[1], 0.01))
 
-    brake_ranges = [create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)]
-    brake_ranges.append(create_interval(brake_prog.pid_info()[1], 0.001))
+        accel_ranges = [create_interval(accel_prog.pid_info()[0][const], 0.05) for const in range(3)]
+        accel_ranges.append(create_interval(accel_prog.pid_info()[1], 0.5))
+        accel_ranges.append(create_interval(accel_prog.pid_info()[2], 0.1))
+        accel_ranges.append(create_interval(accel_prog.pid_info()[3], 0.01))
 
-    pid_ranges = [steer_ranges, accel_ranges, brake_ranges]
-    new_paras = param_finder.pid_parameters(pid_ranges)
+        brake_ranges = [create_interval(brake_prog.pid_info()[0][const], 0.05) for const in range(3)]
+        brake_ranges.append(create_interval(brake_prog.pid_info()[1], 0.001))
 
-    steer_prog.update_parameters([new_paras[i] for i in ['sp0', 'sp1', 'sp2']], new_paras['spt'])
-    accel_prog.update_parameters([new_paras[i] for i in ['ap0', 'ap1', 'ap2']], new_paras['apt'], new_paras['api'], new_paras['apc'])
-    brake_prog.update_parameters([new_paras[i] for i in ['bp0', 'bp1', 'bp2']], new_paras['bpt'])
+        pid_ranges = [steer_ranges, accel_ranges, brake_ranges]
+        new_paras = param_finder.pid_parameters(pid_ranges)
 
-    programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+        steer_prog.update_parameters([new_paras[i] for i in ['sp0', 'sp1', 'sp2']], new_paras['spt'])
+        accel_prog.update_parameters([new_paras[i] for i in ['ap0', 'ap1', 'ap2']], new_paras['apt'], new_paras['api'], new_paras['apc'])
+        brake_prog.update_parameters([new_paras[i] for i in ['bp0', 'bp1', 'bp2']], new_paras['bpt'])
+
+        for i_iter in range(10):
+            logging.info("\n Program Iteration {}".format(i_iter))
+            program_observations, program_actions = programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+
+            # Relabel Observations
+            _, _, program_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], program_observations)
+            #print('\n all_actions', all_actions[0])
+
+            all_observations += program_observations
+            all_actions += program_actions
 
 
     logging.info("Steering Controller" + str(steer_prog.pid_info()))
     logging.info("Acceleration Controller" + str(accel_prog.pid_info()))
     logging.info("Brake Controller" + str(brake_prog.pid_info()))
+
+    programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
+
 
 
 #[
