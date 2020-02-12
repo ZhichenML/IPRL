@@ -116,7 +116,21 @@ def programmatic_game(steer, accel, brake, track_name='practice.xml'):
         env.end()  # This is for shutting down TORCS
         logging.info("Finish.")
 
-
+def test_policy(track_name, seed):
+    env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
+    nn_agent = NeuralAgent(track_name=track_name)
+    #Now load the weight
+    logging.info("Now we load the weight")
+    try:
+        nn_agent.actor.model.load_weights("actormodel_"+str(seed)+".h5")
+        nn_agent.critic.model.load_weights("criticmodel_"+str(seed)+".h5")
+        nn_agent.actor.target_model.load_weights("actormodel_"+str(seed)+".h5")
+        nn_agent.critic.target_model.load_weights("criticmodel_"+str(seed)+".h5")
+        logging.info("Weight load successfully")
+    except:
+        logging.info("Cannot find the weight")
+    nn_agent.rollout(env)
+    return None
 
 def learn_policy(track_name, test_program, seed):
 
@@ -216,6 +230,7 @@ if __name__ == "__main__":
     parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
     parser.add_argument('--test_program', default=False)
+    parser.add_argument('--train_indicator', default=1)
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -230,4 +245,7 @@ if __name__ == "__main__":
             logging.StreamHandler(sys.stdout)
         ])
     logging.info("Logging started with level: INFO")
-    learn_policy(track_name=args.trackfile, test_program=args.test_program, seed = args.seed)
+    if args.train_indicator == 1:
+        learn_policy(track_name=args.trackfile, test_program=args.test_program, seed = args.seed)
+    else:
+        test_policy(track_name=args.trackfile, seed = args.seed)
