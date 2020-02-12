@@ -457,6 +457,9 @@ class NeuralAgent():
         observation_list = []
         actions_list = []
 
+        lastLapTime = []
+        sp =[]
+
         for j_iter in range(max_steps):
             if tree:
                 tree_obs = [sensor for obs in tempObs[:-1] for sensor in obs]
@@ -489,6 +492,14 @@ class NeuralAgent():
 
             ob, r_t, done, info = env.step(a_t[0])
 
+            sp.append(info['speed'])
+
+            if lastLapTime == []:
+                if info['lastLapTime']>0:
+                    lastLapTime.append(info['lastLapTime'])
+            elif info['lastLapTime']>0 and lastLapTime[-1] != info['lastLapTime']:
+                lastLapTime.append(info['lastLapTime'])
+
             s_t1 = np.hstack(
                 (ob.speedX, ob.angle, ob.trackPos, ob.speedY, ob.speedZ, ob.rpm, ob.wheelSpinVel / 100.0, ob.track))
 
@@ -519,7 +530,15 @@ class NeuralAgent():
             if done:
                 break
 
+
         logging.info("Data Collection Finished!")
+        logging.info('Episode ends! \n' +
+                      "Episode Reward: " + str(total_reward) +
+                     " Episode Length: " + str(j_iter+1) + " Ave Reward: " + str(total_reward/(j_iter+1)) +
+                     "\n Distance: " + str(info['distRaced']) + ' ' + str(info['distFromStart']) +
+                     "\n Last Lap Times: " + str(info['lastLapTime']) + " Cur Lap Times: " + str(info['curLapTime']) + " lastLaptime: " + str(lastLapTime) +
+                     "\n ave sp: " + str(np.mean(sp)) + " max sp: " + str(np.max(sp)) )
+
 
         env.end()
 

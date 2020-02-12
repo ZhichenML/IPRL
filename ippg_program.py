@@ -144,7 +144,7 @@ def learn_policy(track_name, test_program, seed):
     # 2. Collect data
     all_observations = []
     all_actions = []
-    for i_iter in range(50): # optimize controller parameters
+    for i_iter in range(100): # optimize controller parameters
         logging.info("\n Iteration {}".format(i_iter))
         # Learn/Update Neural Policy
         #if i_iter == 0:
