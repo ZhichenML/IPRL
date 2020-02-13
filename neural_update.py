@@ -429,6 +429,11 @@ class NeuralAgent():
                 with open(filename,"wb") as f:
                     pickle.dump(self.save_total_step, f)'''
 
+
+            if i_episode>500 and np.array(self.save['total_reward'][-10:])<20:
+                print('model degenerated. Stop at '+ str(i_episode))
+                break
+
         env.end()  # This is for shutting down TORCS
         logging.info("Neural Policy Update Finish.")
         return None
