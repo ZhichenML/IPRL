@@ -220,6 +220,8 @@ class TorcsEnv:
         client = self.client
         client.get_servers_input()  # Get the initial input from torcs
 
+        logging.info('Successfully reset S')
+
         obs = client.S.d  # Get the current full-observation from torcs
         self.observation = self.make_observaton(obs)
 
