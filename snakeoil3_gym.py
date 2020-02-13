@@ -246,7 +246,7 @@ class Client():
             except socket.error as emsg:
                 logging.info('.e')
                 print(socket.error)
-                return # ???????????
+                #return # ???????????
                 #print "Waiting for data on %d.............." % self.port
             if '***identified***' in sockdata:
                 logging.info("Client connected on %d.............." % self.port)
