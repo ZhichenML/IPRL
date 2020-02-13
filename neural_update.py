@@ -170,7 +170,7 @@ class NeuralAgent():
 
         logging.info("TORCS Experiment Start!") # with Lambda = " + str(self.lambda_mix))
 
-
+        '''
         #Now load the weight
         logging.info("Now we load the weight")
         try:
@@ -180,7 +180,7 @@ class NeuralAgent():
             self.critic.target_model.load_weights("criticmodel_"+str(seed)+".h5")
             logging.info("Weight load successfully")
         except:
-            logging.info("Cannot find the weight")
+            logging.info("Cannot find the weight")'''
 
 
         for i_episode in range(episode_count):
