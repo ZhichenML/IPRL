@@ -395,12 +395,12 @@ class NeuralAgent():
                     json.dump(self.critic.model.to_json(), outfile)
 
 
-                filename = "/model/actormodel_"+str(seed)+'_'+str(i_episode+1)+".h5"
+                filename = "./model/actormodel_"+str(seed)+'_'+str(i_episode+1)+".h5"
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
                 self.actor.model.save_weights(filename, overwrite=True)
-                filename = "model/criticmodel_"+str(seed)+'_'+str(i_episode+1)+".h5"
+                filename = "./model/criticmodel_"+str(seed)+'_'+str(i_episode+1)+".h5"
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
