@@ -394,6 +394,9 @@ class NeuralAgent():
                 with open("criticmodel.json", "w") as outfile:
                     json.dump(self.critic.model.to_json(), outfile)
 
+                self.actor.model.save_weights("/model/actormodel_"+str(seed)+'_'+str(i_episode+1)+".h5", overwrite=True)
+                self.critic.model.save_weights("model/criticmodel_"+str(seed)+'_'+str(i_episode+1)+".h5", overwrite=True)
+
 
             if np.mod(i_episode+1, 10) == 0:
                 filename = "./Fig/iprl_save_" + str(seed)
@@ -402,6 +405,7 @@ class NeuralAgent():
                     os.makedirs(dirname)
                 with open(filename,'wb') as f:
                     pickle.dump(self.save, f)
+
                 '''filename = "./Fig/iprl_save_total_reward"
                 dirname = os.path.dirname(filename)
                 if not os.path.exists(dirname):
