@@ -454,6 +454,7 @@ class NeuralAgent():
         # Generate a Torcs environment
         env = TorcsEnv(vision=vision, throttle=True, gear_change=False, track_name=self.track_name)
         ob = env.reset(relaunch=True)
+        print("S0=", ob)
 
 
         window = 5
