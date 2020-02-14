@@ -169,7 +169,7 @@ def learn_policy(track_name, test_program, seed):
     nn_agent = NeuralAgent(track_name=track_name)
 
     # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000, tree=False, seed=seed)
+    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1000, tree=False, seed=seed)
 
     # 2. Collect data
     all_observations = []
