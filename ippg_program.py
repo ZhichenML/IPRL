@@ -260,7 +260,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--trackfile', default='practice.xml') # practgt2 practice
     parser.add_argument('--seed', default=1337)
-    parser.add_argument('--logname', default='AdaptiveProgramIPPG_')
+    parser.add_argument('--logname', default='PIRL')
     parser.add_argument('--test_program', default=False)
     parser.add_argument('--train_indicator', default=1)
     args = parser.parse_args()
