@@ -148,7 +148,7 @@ def test_policy(track_name, seed):
     nn_agent.rollout(env)
     return None
 
-def learn_policy(track_name, test_program, seed):
+def learn_policy(track_name, test_program, seed, program_from_file):
 
     # Define Pi_0
     # def __init__(self, pid_constants=(0, 0, 0), pid_target=0.0, pid_sensor=0, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.0, condition='False')
@@ -168,8 +168,19 @@ def learn_policy(track_name, test_program, seed):
 
     nn_agent = NeuralAgent(track_name=track_name)
 
-    # 1. train the neural network
-    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1000, tree=False, seed=seed)
+    if program_from_file:
+        logging.info("Now we load the weight")
+        try:
+            nn_agent.actor.model.load_weights("./model_1339/actormodel_"+str(seed)+'_'+str(900)+".h5")
+            nn_agent.critic.model.load_weights("./model_1339/criticmodel_"+str(seed)+'_'+str(900)+".h5")
+            nn_agent.actor.target_model.load_weights("./model_1339/actormodel_"+str(seed)+'_'+str(900)+".h5")
+            nn_agent.critic.target_model.load_weights("./model_1339/criticmodel_"+str(seed)+'_'+str(900)+".h5")
+            logging.info("Weight load successfully")
+        except:
+            logging.info("Cannot find the weight")
+    else:
+        # 1. train the neural network
+        nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=1000, tree=False, seed=seed)
 
     # 2. Collect data
     all_observations = []
@@ -263,6 +274,7 @@ if __name__ == "__main__":
     parser.add_argument('--logname', default='PIRL')
     parser.add_argument('--test_program', default=False)
     parser.add_argument('--train_indicator', default=1)
+    parser.add_argument('--program_from_file', default=0)
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -278,6 +290,6 @@ if __name__ == "__main__":
         ])
     logging.info("Logging started with level: INFO")
     if args.train_indicator == 1:
-        learn_policy(track_name=args.trackfile, test_program=args.test_program, seed = args.seed)
+        learn_policy(track_name=args.trackfile, test_program=args.test_program, seed = args.seed, program_from_file=args.program_from_file)
     else:
         test_policy(track_name=args.trackfile, seed = args.seed)
