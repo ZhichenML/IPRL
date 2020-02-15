@@ -157,7 +157,7 @@ class TorcsEnv:
         episode_terminate = False
 
         if self.terminal_judge_start < self.time_step:
-            if abs(track.any()) > 1 or abs(trackPos) > 1:  # Episode is terminated if the car is out of track
+            if abs(track.any()) > 1 or abs(trackPos) > 2.7:  # Episode is terminated if the car is out of track
                 print('Out of Track', track.any(), trackPos)
                 reward = -200
                 episode_terminate = True
