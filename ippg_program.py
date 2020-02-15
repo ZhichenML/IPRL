@@ -138,10 +138,10 @@ def test_policy(track_name, seed):
     #Now load the weight
     logging.info("Now we load the weight")
     try:
-        nn_agent.actor.model.load_weights("actormodel_"+str(seed)+".h5")
-        nn_agent.critic.model.load_weights("criticmodel_"+str(seed)+".h5")
-        nn_agent.actor.target_model.load_weights("actormodel_"+str(seed)+".h5")
-        nn_agent.critic.target_model.load_weights("criticmodel_"+str(seed)+".h5")
+        nn_agent.actor.model.load_weights("./model/actormodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.critic.model.load_weights("./model/criticmodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.actor.target_model.load_weights("./model/actormodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.critic.target_model.load_weights("./model/criticmodel_"+str(seed)+'_'+str(900)+".h5")
         logging.info("Weight load successfully")
     except:
         logging.info("Cannot find the weight")
