@@ -430,7 +430,7 @@ class NeuralAgent():
                     pickle.dump(self.save_total_step, f)'''
 
 
-            if i_episode>500 and all(np.array(self.save['total_reward'][-10:])<20):
+            if i_episode>1000 and all(np.array(self.save['total_reward'][-20:])<20):
                 print('model degenerated. Stop at Epsisode '+ str(i_episode))
                 break
 
