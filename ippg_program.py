@@ -54,7 +54,7 @@ class ParameterFinder():
                                          'ap0': info_list[1][0], 'ap1': info_list[1][1], 'ap2': info_list[1][2], 'apt': info_list[1][3], 'api': info_list[1][4], 'apc': info_list[1][5],
                                          'bp0': info_list[2][0], 'bp1': info_list[2][1], 'bp2': info_list[2][2], 'bpt': info_list[2][3]}, verbose=0)
 
-        bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
+        bo_pid.maximize(init_points=20, n_iter=20, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
         logging.info(bo_pid.max['target'])
 
@@ -188,7 +188,7 @@ def learn_policy(track_name, test_program, seed, program_from_file):
     all_observations = []
     all_actions = []
 
-    relabel_count = 5
+    relabel_count = 100
     for relabel_ind in range(relabel_count):
         logging.info("\n Iteration {}".format(relabel_ind))
         for i_iter in range(1): # optimize controller parameters
