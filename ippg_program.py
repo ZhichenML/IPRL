@@ -139,10 +139,10 @@ def test_policy(track_name, seed):
     #Now load the weight
     logging.info("Now we load the weight")
     try:
-        nn_agent.actor.model.load_weights("./model/actormodel_"+str(seed)+'_'+str(900)+".h5")
-        nn_agent.critic.model.load_weights("./model/criticmodel_"+str(seed)+'_'+str(900)+".h5")
-        nn_agent.actor.target_model.load_weights("./model/actormodel_"+str(seed)+'_'+str(900)+".h5")
-        nn_agent.critic.target_model.load_weights("./model/criticmodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.actor.model.load_weights("./model_1343/actormodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.critic.model.load_weights("./model_1343/criticmodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.actor.target_model.load_weights("./model_1343/actormodel_"+str(seed)+'_'+str(900)+".h5")
+        nn_agent.critic.target_model.load_weights("./model_1343/criticmodel_"+str(seed)+'_'+str(900)+".h5")
         logging.info("Weight load successfully")
     except:
         logging.info("Cannot find the weight")
@@ -161,7 +161,7 @@ def learn_policy(track_name, test_program, seed, program_from_file):
     #accel_prog = Controller(pid_constants=[3.9578696354914067, 0.034243277593053255, 48.77139638135019], pid_target=0.7986708128541729, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.061662451598623685, para_condition=0.004586213773642287, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
     #brake_prog = Controller(pid_constants=[-0.015872359140464996, 0.01975284177188144, 0.004113270233727151], pid_target=0.0005206986363191781, pid_sensor=2, pid_sub_sensor=0)
 
-    if test_program == True:
+    if test_program == 1:
         for seeds in {1337, 1338, 1339, 1340, 1341, 1342, 1343}:
             random.seed(seeds)
             programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
@@ -274,7 +274,7 @@ if __name__ == "__main__":
     parser.add_argument('--trackfile', default='practice.xml') # practgt2 practice
     parser.add_argument('--seed', default=1337)
     parser.add_argument('--logname', default='PIRL')
-    parser.add_argument('--test_program', default=True)
+    parser.add_argument('--test_program', default=0)
     parser.add_argument('--train_indicator', default=1)
     parser.add_argument('--program_from_file', default=0)
     args = parser.parse_args()
