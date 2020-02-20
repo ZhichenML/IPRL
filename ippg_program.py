@@ -165,7 +165,8 @@ def learn_policy(track_name, test_program, seed, program_from_file):
         for seeds in {1337, 1338, 1339, 1340, 1341, 1342, 1343}:
             random.seed(seeds)
             programmatic_game(steer_prog, accel_prog, brake_prog, track_name=track_name)
-        return None
+            print('Finish')
+        return
 
     nn_agent = NeuralAgent(track_name=track_name)
 
