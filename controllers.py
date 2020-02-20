@@ -13,7 +13,7 @@ class Controller():
         self.condition = condition
         self.final_target = pid_target
 
-    def fold_pid(self, lobs, acc):
+    def fold_pid(self, acc, lobs):
         return acc + (self.final_target - lobs[self.pid_sensor][self.pid_sub_sensor])
 
     def pid_execute(self, obs):

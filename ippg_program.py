@@ -56,6 +56,7 @@ class ParameterFinder():
 
         bo_pid.maximize(init_points=50, n_iter=100, kappa=5, **gp_params)
         logging.info(bo_pid.max['params'])
+        logging.info(bo_pid.max['target'])
 
         return bo_pid.max['params']
 
