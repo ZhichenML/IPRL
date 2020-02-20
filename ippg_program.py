@@ -153,13 +153,13 @@ def learn_policy(track_name, test_program, seed, program_from_file):
 
     # Define Pi_0
     # def __init__(self, pid_constants=(0, 0, 0), pid_target=0.0, pid_sensor=0, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.0, condition='False')
-    steer_prog = Controller(pid_constants=[0.97, 0.05, 49.98], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
-    accel_prog = Controller(pid_constants=[3.97, 0.01, 48.79], pid_target=0.30, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.01, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
-    brake_prog = Controller(pid_constants=[0, 0, 0], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
+    #steer_prog = Controller(pid_constants=[0.97, 0.05, 49.98], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
+    #accel_prog = Controller(pid_constants=[3.97, 0.01, 48.79], pid_target=0.30, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.0, para_condition=0.01, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
+    #brake_prog = Controller(pid_constants=[0, 0, 0], pid_target=0, pid_sensor=2, pid_sub_sensor=0)
 
-    #steer_prog = Controller(pid_constants=[0.9522474799655352, 0.07227723571517054, 49.93725667380849], pid_target=-0.00027354621139857004, pid_sensor=2, pid_sub_sensor=0)
-    #accel_prog = Controller(pid_constants=[3.9578696354914067, 0.034243277593053255, 48.77139638135019], pid_target=0.7986708128541729, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.061662451598623685, para_condition=0.004586213773642287, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
-    #brake_prog = Controller(pid_constants=[-0.015872359140464996, 0.01975284177188144, 0.004113270233727151], pid_target=0.0005206986363191781, pid_sensor=2, pid_sub_sensor=0)
+    steer_prog = Controller(pid_constants=[0.8811106985926564, 0.01712974054406783, 49.947819771350105], pid_target=-0.000664433050917396, pid_sensor=2, pid_sub_sensor=0)
+    accel_prog = Controller(pid_constants=[4.1120530179121175, 0.13995816823737148, 48.684311417901206], pid_target=2.168666263543196, pid_sensor=5, pid_sub_sensor=0, pid_increment=0.20990457893971481, para_condition=0.0038142532010616106, condition='obs[-1][2][0] > -self.para_condition and obs[-1][2][0] < self.para_condition')
+    brake_prog = Controller(pid_constants=[-0.06600550019147762, 0.01192179945036169, -0.03761014893630601], pid_target=0.0012019017967644296, pid_sensor=2, pid_sub_sensor=0)
 
     if test_program == 1:
         for seeds in {1337, 1338, 1339, 1340, 1341, 1342, 1343}:
