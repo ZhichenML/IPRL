@@ -19,6 +19,8 @@ from scipy import spatial
 from neural_update import NeuralAgent
 from controllers import Controller
 from utils import *
+import os
+import pickle
 
 class ParameterFinder():
     def __init__(self, inputs, actions, steer_prog, accel_prog, brake_prog):
@@ -187,11 +189,12 @@ def learn_policy(track_name, test_program, seed, program_from_file):
     # 2. Collect data
     all_observations = []
     all_actions = []
+    data=dict(obs=[], act=[])
 
-    relabel_count = 100
+    relabel_count = 1
     for relabel_ind in range(relabel_count):
         logging.info("\n Iteration {}".format(relabel_ind))
-        for i_iter in range(1): # optimize controller parameters
+        for i_iter in range(3): # optimize controller parameters
             # Learn/Update Neural Policy
             #if i_iter == 0:
             #    nn_agent.update_neural([steer_prog, accel_prog, brake_prog], episode_count=2000)
@@ -207,12 +210,21 @@ def learn_policy(track_name, test_program, seed, program_from_file):
             observation_list, action_list = nn_agent.collect_data([steer_prog, accel_prog, brake_prog])
             #print('observation_list', observation_list[0])
             #print('\n action_list', action_list[0])
+            data['obs'].append(observation_list)
+            data['act'].append(action_list)
 
             all_observations += observation_list
             all_actions += action_list
             # Relabel Observations
             #_, _, all_actions = nn_agent.label_data([steer_prog, accel_prog, brake_prog], all_observations)
             #print('\n all_actions', all_actions[0])
+
+        filename = "./Fig/data_" + str(seed)
+        dirname = os.path.dirname(filename)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        with open(filename,'wb') as f:
+            pickle.dump(data, f)
 
         # 3. Learn new programmatic policy
         logging.info("Learn programmatic policy! \n")
