@@ -175,10 +175,10 @@ def learn_policy(track_name, test_program, seed, program_from_file):
     if program_from_file:
         logging.info("Now we load the weight")
         try:
-            nn_agent.actor.model.load_weights("./model_1343/actormodel_"+str(seed)+'_'+str(900)+".h5")
-            nn_agent.critic.model.load_weights("./model_1343/criticmodel_"+str(seed)+'_'+str(900)+".h5")
-            nn_agent.actor.target_model.load_weights("./model_1343/actormodel_"+str(seed)+'_'+str(900)+".h5")
-            nn_agent.critic.target_model.load_weights("./model_1343/criticmodel_"+str(seed)+'_'+str(900)+".h5")
+            nn_agent.actor.model.load_weights("./model_1343/actormodel_"+str(1343)+'_'+str(900)+".h5")
+            nn_agent.critic.model.load_weights("./model_1343/criticmodel_"+str(1343)+'_'+str(900)+".h5")
+            nn_agent.actor.target_model.load_weights("./model_1343/actormodel_"+str(1343)+'_'+str(900)+".h5")
+            nn_agent.critic.target_model.load_weights("./model_1343/criticmodel_"+str(1343)+'_'+str(900)+".h5")
             logging.info("Weight load successfully")
         except:
             logging.info("Cannot find the weight")
